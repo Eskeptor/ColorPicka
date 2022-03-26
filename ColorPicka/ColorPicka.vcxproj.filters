@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{fcf49622-71c9-474f-829f-531f7c694486}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dialog">
+      <UniqueIdentifier>{4278d1b5-9b71-4722-89ef-7beca92cb15f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dialog\Main">
+      <UniqueIdentifier>{187dc24d-de34-4492-b483-3b636d9e51d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{d6ff29a7-d411-4b65-a2e7-e96634418094}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CppUtil">
+      <UniqueIdentifier>{2ec17a08-e2c3-489e-b6a6-2ccac15201a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Control">
+      <UniqueIdentifier>{45ec42e3-55d8-4883-90c5-02a7e628bda4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Control\ColorRect">
+      <UniqueIdentifier>{50bf2b55-5434-4a40-ab5c-6ee925c892d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Control\MouseMagnifier">
+      <UniqueIdentifier>{99fc70fc-b948-4105-ad67-a4622fe055e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App\Global">
+      <UniqueIdentifier>{565e9428-a120-4810-8308-da83b9786416}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ColorPicka.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorPickaDlg.h">
+      <Filter>Dialog\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="CppUtil\CppUtil.h">
+      <Filter>CppUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseMagnifier\MouseMagnifier.h">
+      <Filter>Control\MouseMagnifier</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorRect\ColorRect.h">
+      <Filter>Control\ColorRect</Filter>
+    </ClInclude>
+    <ClInclude Include="GVariable.h">
+      <Filter>App\Global</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ColorPicka.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorPickaDlg.cpp">
+      <Filter>Dialog\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="CppUtil\CppUtil.cpp">
+      <Filter>CppUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseMagnifier\MouseMagnifier.cpp">
+      <Filter>Control\MouseMagnifier</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorRect\ColorRect.cpp">
+      <Filter>Control\ColorRect</Filter>
+    </ClCompile>
+    <ClCompile Include="GVariable.cpp">
+      <Filter>App\Global</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\ColorPicka.ico">
+      <Filter>Resource</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ColorPicka.rc">
+      <Filter>Resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\ColorPicka.rc2">
+      <Filter>Resource</Filter>
+    </None>
+  </ItemGroup>
+</Project>
