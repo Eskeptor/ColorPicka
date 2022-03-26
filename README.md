@@ -1,4 +1,5 @@
 # Welcome to my "ColorPicka"
+![homepage](./ScreenShot/ScreenShot01.PNG)
 ## About this project
 Color Picker Program (MFC, C++)
 ## How to Use?
