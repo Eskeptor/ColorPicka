@@ -4,6 +4,8 @@
 //
 #define IDD_COLORPICKA_DIALOG           102
 #define IDR_MAINFRAME                   128
+#define IDR_MENU1                       131
+#define IDD_OPTIONS                     132
 #define IDC_EDIT_H_R_HEX                1001
 #define IDC_BTN_HEX_TO_RGB              1004
 #define IDC_EDIT_H_R_RED                1006
@@ -26,6 +28,8 @@
 #define IDC_COLOR_HSV_2                 1029
 #define IDC_LIST1                       1030
 #define IDC_LIST_COLOR                  1030
+#define IDC_PGRID_OPTION                1032
+#define IDC_BTN_SAVE                    1033
 #define IDC_BTN_RGB_TO_HEX              1037
 #define IDC_EDIT_H_H_HEX                1038
 #define IDC_EDIT_H_H_H                  1039
@@ -41,14 +45,17 @@
 #define IDC_EDIT_R_H_RED                1050
 #define IDC_EDIT_R_H_GREEN              1051
 #define IDC_EDIT_R_H_BLUE               1052
+#define ID_OPTION_TEST                  32771
+#define ID_FILE_OPTION                  32772
+#define ID_FILE_EXIT                    32773
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        131
-#define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1032
+#define _APS_NEXT_RESOURCE_VALUE        135
+#define _APS_NEXT_COMMAND_VALUE         32774
+#define _APS_NEXT_CONTROL_VALUE         1034
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

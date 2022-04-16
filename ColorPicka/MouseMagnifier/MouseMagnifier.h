@@ -50,6 +50,7 @@ private:
 	COLORREF m_clrCrossColor;			// Cross Line Color
 	UINT m_nEvtSendColorID;				// Send Color Event ID
 	COLORREF m_clrCurCursorPosColor;	// Color of Current Mouse Position
+	bool m_bIsIncludeWindow;			// Window Not Include Option
 
 	stThr m_stRefreshThread;
 
@@ -88,6 +89,8 @@ public:
 	void SetCrossColor(COLORREF clrCross);
 	// Set Send Color Event ID To Parent
 	void SetEventIDSendColor(UINT nID);
+	// Set Window Include Option
+	void SetIncludeWindow(bool bInclude);
 
 // ======================================================================================================
 	

@@ -9,13 +9,14 @@ Color Picker Program (MFC, C++)
  3) Check the color.
  ++) Try using a color converter.
 ```
-## What's New? (Last updated 2022.03.26)
+## What's New? (Last updated 2022.04.16)
 ```
- 1) First Version Update
+ 1) Add Picked Color List
+ 2) Add Option
 ```
 ## Next Updates
 ```
- 1) Add Picked Color List
+ 1) Simple Mode
 ```
 ## License
 ```

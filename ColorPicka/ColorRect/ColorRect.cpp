@@ -35,9 +35,6 @@ void CColorRect::OnPaint()
 	CDC memDC;
 	memDC.CreateCompatibleDC(pDC);
 
-	CRect rect;
-	GetClientRect(&rect);
-
 	CBitmap bitmap;
 	bitmap.CreateCompatibleBitmap(pDC, m_rtSize.Width(), m_rtSize.Height());
 

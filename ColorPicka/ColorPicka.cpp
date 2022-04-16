@@ -1,42 +1,28 @@
-﻿
-// ColorPicka.cpp: 애플리케이션에 대한 클래스 동작을 정의합니다.
-//
-
-#include "pch.h"
+﻿#include "pch.h"
 #include "framework.h"
 #include "ColorPicka.h"
 #include "ColorPickaDlg.h"
+#include "CppUtil/CppUtil.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 
-// CColorPickaApp
-
 BEGIN_MESSAGE_MAP(CColorPickaApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
 
-// CColorPickaApp 생성
-
 CColorPickaApp::CColorPickaApp()
 {
-	// 다시 시작 관리자 지원
 	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RESTART;
-
-	// TODO: 여기에 생성 코드를 추가합니다.
-	// InitInstance에 모든 중요한 초기화 작업을 배치합니다.
 }
 
 
-// 유일한 CColorPickaApp 개체입니다.
-
 CColorPickaApp theApp;
 
-
-// CColorPickaApp 초기화
 
 BOOL CColorPickaApp::InitInstance()
 {
@@ -69,7 +55,9 @@ BOOL CColorPickaApp::InitInstance()
 	// 해당 설정이 저장된 레지스트리 키를 변경하십시오.
 	// TODO: 이 문자열을 회사 또는 조직의 이름과 같은
 	// 적절한 내용으로 수정해야 합니다.
-	SetRegistryKey(_T("로컬 애플리케이션 마법사에서 생성된 애플리케이션"));
+	SetRegistryKey(_T("ColorPicka"));
+
+	InitOptions();
 
 	CColorPickaDlg dlg;
 	m_pMainWnd = &dlg;
@@ -89,6 +77,7 @@ BOOL CColorPickaApp::InitInstance()
 		TRACE(traceAppMsg, 0, "경고: 대화 상자를 만들지 못했으므로 애플리케이션이 예기치 않게 종료됩니다.\n");
 		TRACE(traceAppMsg, 0, "경고: 대화 상자에서 MFC 컨트롤을 사용하는 경우 #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS를 수행할 수 없습니다.\n");
 	}
+	SaveOptions();
 
 	// 위에서 만든 셸 관리자를 삭제합니다.
 	if (pShellManager != nullptr)
@@ -105,3 +94,59 @@ BOOL CColorPickaApp::InitInstance()
 	return FALSE;
 }
 
+
+/**
+Initialize Option
+@access		private
+@param
+@return		true / false
+*/
+bool CColorPickaApp::InitOptions()
+{
+	CString strIniFileName = _T("");
+	strIniFileName.Format(_T("%s%s.ini"), CppUtil::GetExePath().GetString(), CppUtil::GetExeName(false).GetString());
+
+	if (CppUtil::FileCheck(strIniFileName))
+	{
+		// Magnifier
+		{
+			g_stOptions.stOpMag.bIsDrawCross = CppUtil::INIReadInt(STR_APP_MAG, STR_KEY_MAG_DRAWCROSS, strIniFileName) == TRUE ? true : false;
+			g_stOptions.stOpMag.bIsIncludeWindow = CppUtil::INIReadInt(STR_APP_MAG, STR_KEY_MAG_INCWIN, strIniFileName) == TRUE ? true : false;
+		}
+
+		// List
+		{
+			g_stOptions.stOpList.bIsSaveLog = CppUtil::INIReadInt(STR_APP_LIST, STR_KEY_LIST_SAVELOG, strIniFileName) == TRUE ? true : false;
+			g_stOptions.stOpList.bIsUseList = CppUtil::INIReadInt(STR_APP_LIST, STR_KEY_LIST_USE, strIniFileName) == TRUE ? true : false;
+			g_stOptions.stOpList.nLogMax = CppUtil::INIReadInt(STR_APP_LIST, STR_KEY_LIST_LOGMAX, strIniFileName);
+		}
+	}
+
+	return true;
+}
+
+
+/**
+Save Option
+@access		private
+@param
+@return
+*/
+void CColorPickaApp::SaveOptions()
+{
+	CString strIniFileName = _T("");
+	strIniFileName.Format(_T("%s%s.ini"), CppUtil::GetExePath().GetString(), CppUtil::GetExeName(false).GetString());
+
+	// Magnifier
+	{
+		CppUtil::INIWriteString(STR_APP_MAG, STR_KEY_MAG_DRAWCROSS, strIniFileName, g_stOptions.stOpMag.bIsDrawCross);
+		CppUtil::INIWriteString(STR_APP_MAG, STR_KEY_MAG_INCWIN, strIniFileName, g_stOptions.stOpMag.bIsIncludeWindow);
+	}
+
+	// List
+	{
+		CppUtil::INIWriteString(STR_APP_LIST, STR_KEY_LIST_SAVELOG, strIniFileName, g_stOptions.stOpList.bIsSaveLog);
+		CppUtil::INIWriteString(STR_APP_LIST, STR_KEY_LIST_USE, strIniFileName, g_stOptions.stOpList.bIsUseList);
+		CppUtil::INIWriteString(STR_APP_LIST, STR_KEY_LIST_LOGMAX, strIniFileName, g_stOptions.stOpList.nLogMax);
+	}
+}

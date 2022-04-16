@@ -1,38 +1,47 @@
 ﻿#pragma once
-
-#ifndef __AFXWIN_H__
-	#error "PCH에 대해 이 파일을 포함하기 전에 'pch.h'를 포함합니다."
-#endif
-
-#include "resource.h"	
+#include "afxdialogex.h"
+#include "BBungGrid/BBungGrid.h"
 
 
-class CColorPickaApp : public CWinApp
+class COptionDlg : public CDialog
 {
 // Enums and Structure ==================================================================================
+public:
+#ifdef AFX_DESIGN_TIME
+	enum { IDD = IDD_OPTIONS };
+#endif
 
 // ======================================================================================================
 
 
 // Variables ============================================================================================
+private:
+	CBBungGrid m_ctrlGrid;
+
+public:
+	DECLARE_DYNAMIC(COptionDlg)
 
 // ======================================================================================================
 
 
 // Functions ============================================================================================
 private:
-	bool InitOptions();
-	void SaveOptions();
+	// Control Initialize
+	void InitControls();
 
 protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    
+
 	DECLARE_MESSAGE_MAP()
 
 public:
-	CColorPickaApp();
+	COptionDlg(CWnd* pParent = nullptr);   
+	virtual ~COptionDlg();
 
-	virtual BOOL InitInstance();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual BOOL OnInitDialog();
+	afx_msg void OnBnClickedBtnSave();
 
 // ======================================================================================================
-};
 
-extern CColorPickaApp theApp;
+};

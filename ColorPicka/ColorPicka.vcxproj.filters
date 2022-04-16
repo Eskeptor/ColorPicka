@@ -28,6 +28,15 @@
     <Filter Include="App\Global">
       <UniqueIdentifier>{565e9428-a120-4810-8308-da83b9786416}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Control\ColorListCtrl">
+      <UniqueIdentifier>{282752cd-6ba1-441d-a8f9-5eed5be30361}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Control\BBungGrid">
+      <UniqueIdentifier>{27cea52d-05b4-4628-a5c8-e91e45f00296}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dialog\Option">
+      <UniqueIdentifier>{69cfc515-6fc5-46d0-9662-0a250c56429a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ColorPicka.h">
@@ -60,6 +69,18 @@
     <ClInclude Include="GVariable.h">
       <Filter>App\Global</Filter>
     </ClInclude>
+    <ClInclude Include="ColorListCtrl\ColorListCtrl.h">
+      <Filter>Control\ColorListCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorListCtrl\ColorListCtrlHeader.h">
+      <Filter>Control\ColorListCtrl</Filter>
+    </ClInclude>
+    <ClInclude Include="BBungGrid\BBungGrid.h">
+      <Filter>Control\BBungGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionDlg.h">
+      <Filter>Dialog\Option</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ColorPicka.cpp">
@@ -82,6 +103,18 @@
     </ClCompile>
     <ClCompile Include="GVariable.cpp">
       <Filter>App\Global</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorListCtrl\ColorListCtrl.cpp">
+      <Filter>Control\ColorListCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorListCtrl\ColorListCtrlHeader.cpp">
+      <Filter>Control\ColorListCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="BBungGrid\BBungGrid.cpp">
+      <Filter>Control\BBungGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionDlg.cpp">
+      <Filter>Dialog\Option</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

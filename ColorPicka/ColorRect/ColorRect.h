@@ -19,9 +19,9 @@ private:
 	COLORREF m_clrBack;					// Background Color
 	COLORREF m_clrBorder;				// Border Color
 	CRect m_rtSize;						// Control's Rect Size
-	int m_nBorderThickness;					// Border Thickness
+	int m_nBorderThickness;				// Border Thickness
 
-	bool m_bBorderEnable;
+	bool m_bBorderEnable;				// Border Enabler
 
 public:
 	DECLARE_DYNAMIC(CColorRect)

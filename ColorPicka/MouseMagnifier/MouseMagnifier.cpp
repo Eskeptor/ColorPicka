@@ -13,6 +13,7 @@ CMouseMagnifier::CMouseMagnifier()
 	, m_clrCrossColor(RGB(Default_CrossClrRed, Default_CrossClrGreen, Default_CrossClrBlue))
 	, m_nEvtSendColorID(0)
 	, m_clrCurCursorPosColor(0)
+	, m_bIsIncludeWindow(true)
 {
 
 }
@@ -40,9 +41,6 @@ void CMouseMagnifier::OnPaint()
 
 	CDC memDC;
 	memDC.CreateCompatibleDC(pDC);
-	
-	CRect rect;
-	GetClientRect(&rect);
 
 	CBitmap bitmap;
 	bitmap.CreateCompatibleBitmap(pDC, m_rtSize.Width(), m_rtSize.Height());
@@ -201,16 +199,42 @@ UINT CMouseMagnifier::ThreadMousePosition(LPVOID pParam)
 	if (pMain != nullptr)
 	{
 		POINT ptMouse;
+		CRect rtCurWindow;
+		bool bIsIncludeWindow = false;
 		while (pMain->m_stRefreshThread.bExitFlag == false &&
 			   pMain != nullptr)
 		{
+			pMain->GetParent()->GetWindowRect(&rtCurWindow);
 			GetCursorPos(&ptMouse);
-			if (ptMouse.x != pMain->m_ptMouse.x ||
-				ptMouse.y != pMain->m_ptMouse.y)
+
+			if (pMain->m_bIsIncludeWindow)
 			{
-				pMain->m_ptMouse.x = ptMouse.x;
-				pMain->m_ptMouse.y = ptMouse.y;
-				pMain->Invalidate();
+				bIsIncludeWindow = true;
+			}
+			else
+			{
+				if (ptMouse.x < rtCurWindow.left ||
+					ptMouse.x > rtCurWindow.right ||
+					ptMouse.y < rtCurWindow.top ||
+					ptMouse.y > rtCurWindow.bottom)
+				{
+					bIsIncludeWindow = true;
+				}
+				else
+				{
+					bIsIncludeWindow = false;
+				}
+			}
+
+			if (bIsIncludeWindow)
+			{
+				if (ptMouse.x != pMain->m_ptMouse.x ||
+					ptMouse.y != pMain->m_ptMouse.y)
+				{
+					pMain->m_ptMouse.x = ptMouse.x;
+					pMain->m_ptMouse.y = ptMouse.y;
+					pMain->Invalidate();
+				}
 			}
 
 			Sleep(1);
@@ -266,4 +290,16 @@ void CMouseMagnifier::OnDestroy()
 		while (m_stRefreshThread.thrRefresh != nullptr)
 			Sleep(1);
 	}
+}
+
+
+/**
+Set Window Include Option
+@access		public
+@param		bInclude		Window Include
+@return
+*/
+void CMouseMagnifier::SetIncludeWindow(bool bInclude)
+{
+	m_bIsIncludeWindow = bInclude;
 }

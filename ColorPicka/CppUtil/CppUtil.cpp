@@ -27,6 +27,34 @@ CString CppUtil::GetExePath()
 
 
 /**
+Get Exe Name
+@param		bIncludeExe		true: Program.exe / false: Program
+@return		Exe Name
+*/
+CString CppUtil::GetExeName(bool bIncludeExe)
+{
+	CString strExeName = _T("");
+
+	TCHAR szTemp[_MAX_PATH + 1] = { 0, };
+	GetModuleFileName(AfxGetApp()->m_hInstance, szTemp, _MAX_PATH);
+	strExeName = szTemp;
+
+	int nLength = strExeName.ReverseFind(_T('\\'));
+	if (bIncludeExe)
+	{
+		strExeName = strExeName.Mid(nLength + 1, strExeName.GetLength() - nLength);
+	}
+	else
+	{
+		int nDot = strExeName.ReverseFind(_T('.'));
+		strExeName = strExeName.Mid(nLength + 1, nDot - nLength - 1);
+	}
+
+	return strExeName;
+}
+
+
+/**
 Hex Data(CString) to Dec Data(int)
 @param		strValue			Hex Data
 @return		Dec Data
@@ -127,6 +155,14 @@ void CppUtil::INIWriteString(CString strAppName, CString strKeyName, CString str
 {
 	CString strValue = _T("");
 	strValue.Format(_T("%f"), fValue);
+
+	WritePrivateProfileString(strAppName, strKeyName, NULL, strFilePath);
+	WritePrivateProfileString(strAppName, strKeyName, strValue, strFilePath);
+}
+void CppUtil::INIWriteString(CString strAppName, CString strKeyName, CString strFilePath, bool bValue)
+{
+	CString strValue = _T("");
+	strValue = bValue ? _T("1") : _T("0");
 
 	WritePrivateProfileString(strAppName, strKeyName, NULL, strFilePath);
 	WritePrivateProfileString(strAppName, strKeyName, strValue, strFilePath);
@@ -401,6 +437,23 @@ int CppUtil::GetFileSize(CString strPath)
 	}
 
 	return nSize;
+}
+
+
+/**
+File Exist
+@param		strFilePath		File Path
+@return		true / false
+*/
+bool CppUtil::FileCheck(CString strFilePath)
+{
+	bool bResult = false;
+
+	CFileStatus fileStatus;
+	if (CFile::GetStatus(strFilePath, fileStatus))
+		bResult = true;
+
+	return bResult;
 }
 
 

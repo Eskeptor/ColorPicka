@@ -4,6 +4,9 @@
 #include "ColorPickaDlg.h"
 #include "afxdialogex.h"
 #include "CppUtil/CppUtil.h"
+#include "OptionDlg.h"
+
+#include <vector>
 
 #ifdef _DEBUG
 	#define new DEBUG_NEW
@@ -40,7 +43,9 @@ BEGIN_MESSAGE_MAP(CColorPickaDlg, CDialogEx)
 	ON_STN_CLICKED(IDC_COLOR_HSV_2, &CColorPickaDlg::OnStnClickedColorHsv2)
 	ON_MESSAGE(eEvent::eEVT_SetCurMousePosColor, &CColorPickaDlg::EvtSetCurMousePosColor)
 	ON_MESSAGE(eEvent::eEVT_KeyCapture, &CColorPickaDlg::EvtKeyCapture)
+	ON_MESSAGE(eEvent::eEVT_SetLogMousePosColor, &CColorPickaDlg::EvtSetLogMousePosColor)
 	ON_WM_CLOSE()
+	ON_COMMAND(ID_FILE_OPTION, &CColorPickaDlg::OnFileOption)
 END_MESSAGE_MAP()
 
 
@@ -78,22 +83,6 @@ void CColorPickaDlg::OnPaint()
 	else
 	{
 		CDialogEx::OnPaint();
-
-		// Color Rect
-		//{
-		//	CRect rect;
-		//	for (int i = 0; i < eColorRectIdx::ColorRectIdxMax; i++)
-		//	{
-		//		m_arrRect[i].ctlRect.GetClientRect(&rect);
-		//		CBrush brBack(RGB(m_arrRect[i].rgbColor.nR, m_arrRect[i].rgbColor.nG, m_arrRect[i].rgbColor.nB));
-
-		//		CDC* pDC = m_arrRect[i].ctlRect.GetWindowDC();
-		//		CBrush* pBrOld = pDC->SelectObject(&brBack);
-		//		pDC->PatBlt(1, 1, rect.Width() - 2, rect.Height() - 2, PATCOPY);
-		//		pDC->SelectObject(pBrOld);
-		//		brBack.DeleteObject();
-		//	}
-		//}
 	}
 }
 
@@ -126,12 +115,12 @@ void CColorPickaDlg::InitControls()
 			SetWindowText(strVersion);
 		}
 
-#ifndef _USE_LIST
-		// Window Size
-		CRect rcWindow;
-		GetWindowRect(&rcWindow);
-		MoveWindow(0, 0, 454, rcWindow.Height());
-#endif
+		if (g_stOptions.stOpList.bIsUseList == false)
+		{
+			CRect rcWindow;
+			GetWindowRect(&rcWindow);
+			MoveWindow(0, 0, 454, rcWindow.Height());
+		}
 	}
 
 	// Label
@@ -178,15 +167,36 @@ void CColorPickaDlg::InitControls()
 	{
 		m_ctrlMag.SubclassDlgItem(IDC_PIC_MOUSE_VIEW, this);
 		m_ctrlMag.SetEventIDSendColor(eEvent::eEVT_SetCurMousePosColor);
+		m_ctrlMag.SetIncludeWindow(g_stOptions.stOpMag.bIsIncludeWindow);
+		m_ctrlMag.SetDrawCross(g_stOptions.stOpMag.bIsDrawCross);
 	}
 
 	// List Control
 	{
 		m_ctrlList.SubclassDlgItem(IDC_LIST_COLOR, this);
+		if (g_stOptions.stOpList.bIsUseList)
+		{
+			m_ctrlList.SetExtendedStyle(LVS_EX_FULLROWSELECT);
+			m_ctrlList.SetEventIDSendColor(eEvent::eEVT_SetLogMousePosColor);
 
-#ifndef _USE_LIST
-		m_ctrlList.ShowWindow(SW_HIDE);
-#endif
+			CRect rtList;
+			m_ctrlList.GetWindowRect(&rtList);
+
+			m_ctrlList.InsertColumn(0, _T("Color"), LVCFMT_LEFT, rtList.Width() - 4);
+			m_ctrlList.SetHeaderSize(30);
+			m_ctrlList.SetHeaderBorder(false);
+			m_ctrlList.SetItemSize(20);
+			m_ctrlList.SetItemMax(g_stOptions.stOpList.nLogMax);
+
+			if (g_stOptions.stOpList.bIsSaveLog)
+			{
+				LoadColorLogData();
+			}
+		}
+		else
+		{
+			m_ctrlList.ShowWindow(SW_HIDE);
+		}
 	}
 }
 
@@ -663,6 +673,7 @@ LRESULT CColorPickaDlg::EvtSetCurMousePosColor(WPARAM, LPARAM lParam)
 	COLORREF clrColor = (COLORREF)lParam;
 
 	SetColorBox(clrColor);
+	AddColorLog(clrColor);
 
 	return 1L;
 }
@@ -719,10 +730,31 @@ void CColorPickaDlg::SetColorBox(COLORREF clrBox)
 
 
 /**
+Add Color Log
+@access		private
+@param		clrLog		Color
+@return
+*/
+void CColorPickaDlg::AddColorLog(COLORREF clrLog)
+{
+	if (g_stOptions.stOpList.bIsUseList)
+	{
+		CString strColorLog = _T("");
+		strColorLog.Format(_T("%d"), clrLog);
+		m_ctrlList.AddRGBColorItem(0, strColorLog);
+	}
+}
+
+
+/**
 OnClose
 */
 void CColorPickaDlg::OnClose()
 {
+	if (g_stOptions.stOpList.bIsSaveLog)
+	{
+		SaveColorLogData();
+	}
 	KeyboardUnhook();
 
 	CDialogEx::OnClose();
@@ -760,7 +792,8 @@ LRESULT CALLBACK KeyboardHooker(int nCode, WPARAM wParam, LPARAM lParam)
 
 		if (bIsCtrlDown)
 		{
-			if (pHookKey->vkCode == g_nHookKey)
+			if (pHookKey->vkCode == g_nHookKey &&
+				wParam == WM_KEYDOWN)
 			{
 				::PostMessage(g_hwndMain, CColorPickaDlg::eEvent::eEVT_KeyCapture, 0, 0);
 			}
@@ -800,6 +833,107 @@ void CColorPickaDlg::KeyboardUnhook()
 	{
 		UnhookWindowsHookEx(g_hKeyboard);
 	}
+}
+
+
+/**
+Set Color Of Log Color
+@event		eEvent::eEVT_SetLogMousePosColor
+@param		wParam		Not Use
+@param		lParam		Color
+@return		1L
+*/
+LRESULT CColorPickaDlg::EvtSetLogMousePosColor(WPARAM, LPARAM lParam)
+{
+	COLORREF clrColor = (COLORREF)lParam;
+
+	SetColorBox(clrColor);
+
+	return 1L;
+}
+
+
+/**
+Get Color Log Data
+@access		private
+@param
+@return
+*/
+void CColorPickaDlg::LoadColorLogData()
+{
+	CString strIniFileName = _T("");
+	strIniFileName.Format(_T("%s%s.ini"), CppUtil::GetExePath().GetString(), CppUtil::GetExeName(false).GetString());
+
+	if (CppUtil::FileCheck(strIniFileName))
+	{
+		CString strLog = CppUtil::INIReadString(STR_APP_LIST, STR_KEY_LIST_LOGDATA, strIniFileName);
+		if (strLog.IsEmpty() == false)
+		{
+			std::vector<CString> vColors;
+
+			int nTokenize = 0;
+			CString strToken = _T("");
+
+			strToken = strLog.Tokenize(_T("|"), nTokenize);
+			while (strToken.IsEmpty() == false)
+			{
+				vColors.push_back(strToken);
+
+				strToken = strLog.Tokenize(_T("|"), nTokenize);
+			}
+
+			int nIdx = 0;
+			std::vector<CString>::reverse_iterator iter = vColors.rbegin();
+			while (iter != vColors.rend())
+			{
+				m_ctrlList.AddRGBColorItem(0, *iter);
+				iter++;
+			}
+		}
+	}
+}
+
+
+/**
+Save Color Log Data
+@access		private
+@param
+@return
+*/
+void CColorPickaDlg::SaveColorLogData()
+{
+	CString strIniFileName = _T("");
+	strIniFileName.Format(_T("%s%s.ini"), CppUtil::GetExePath().GetString(), CppUtil::GetExeName(false).GetString());
+
+	int nCount = m_ctrlList.GetItemCount();
+
+	CString strTemp = _T("");
+	CString strColor = _T("");
+	for (int i = 0; i < nCount; i++)
+	{
+		strTemp = m_ctrlList.GetItemText(i, 0);
+		strColor.Append(strTemp.Mid(1, strTemp.GetLength()));
+
+		if (i != nCount - 1)
+			strColor.Append(_T("|"));
+	}
+
+	CppUtil::INIWriteString(STR_APP_LIST, STR_KEY_LIST_LOGDATA, strIniFileName, strColor);
+}
+
+
+/**
+Menu : File - Option
+*/
+void CColorPickaDlg::OnFileOption()
+{
+	int nLogMax = g_stOptions.stOpList.nLogMax;
+
+	COptionDlg dlgOption;
+	dlgOption.DoModal();
+
+	if (nLogMax != g_stOptions.stOpList.nLogMax)
+		m_ctrlList.SetItemMax(g_stOptions.stOpList.nLogMax);
 }
 
 

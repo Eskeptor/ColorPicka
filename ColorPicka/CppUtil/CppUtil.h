@@ -5,6 +5,8 @@ class CppUtil
 public:
 	// Get Exe Full Path
 	static CString GetExePath();
+	// Get Exe Name
+	static CString GetExeName(bool bIncludeExe = true);
 	// Hex Data(CString) to Dec Data(int)
 	static int HexToDec(CString strValue);
 	// Dec Data(int) to Hex Data(CString)
@@ -18,6 +20,7 @@ public:
 	static void INIWriteString(CString strAppName, CString strKeyName, CString strFilePath, int nValue);
 	static void INIWriteString(CString strAppName, CString strKeyName, CString strFilePath, double dValue);
 	static void INIWriteString(CString strAppName, CString strKeyName, CString strFilePath, float fValue);
+	static void INIWriteString(CString strAppName, CString strKeyName, CString strFilePath, bool bValue);
 
 	// File Write
 	static bool WriteFile(CString strPath, CString strText, int nEncode);
@@ -36,6 +39,8 @@ public:
 	static int FolderCheck(CString strDirPath);
 	// Get File Size
 	static int GetFileSize(CString strPath);
+	// File Exist
+	static bool FileCheck(CString strFilePath);
 
 	// Get File Time Info
 	static void GetFileTimes(CString strPath, SYSTEMTIME* outCreate, SYSTEMTIME* outAccess, SYSTEMTIME* outWrite);

@@ -1,10 +1,11 @@
 ﻿#pragma once
 #include "MouseMagnifier/MouseMagnifier.h"
 #include "ColorRect/ColorRect.h"
+#include "ColorListCtrl/ColorListCtrl.h"
 
 class CColorPickaDlg : public CDialogEx
 {
-	// Enums and Structure ==================================================================================
+// Enums and Structure ==================================================================================
 private:
 	enum eLabelIdx
 	{
@@ -74,6 +75,7 @@ public:
 	{
 		eEVT_SetCurMousePosColor = WM_USER + 100,
 		eEVT_KeyCapture,
+		eEVT_SetLogMousePosColor,
 	};
 
 // ======================================================================================================
@@ -81,11 +83,11 @@ public:
 
 // Variables ============================================================================================
 private:
-	CStatic m_arrLabel[eLabelIdx::LabelIdxMax];
-	CEdit m_arrEdit[eEditIdx::EditIdxMax];
-	CColorRect m_arrRect[eColorRectIdx::ColorRectIdxMax];
-	CMouseMagnifier m_ctrlMag;
-	CListCtrl m_ctrlList;
+	CStatic m_arrLabel[eLabelIdx::LabelIdxMax];				// Label Controls
+	CEdit m_arrEdit[eEditIdx::EditIdxMax];					// Edit Controls
+	CColorRect m_arrRect[eColorRectIdx::ColorRectIdxMax];	// Rect(Color) Controls
+	CMouseMagnifier m_ctrlMag;								// Magnifier Control
+	CColorListCtrl m_ctrlList;								// List Control
 
 protected:
 	HICON m_hIcon;
@@ -120,6 +122,13 @@ private:
 	// Keyboard Unhook
 	void KeyboardUnhook();
 
+	// Add Color Log
+	void AddColorLog(COLORREF clrLog);
+	// Load Color Log Data
+	void LoadColorLogData();
+	// Save Color Log Data
+	void SaveColorLogData();
+
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -127,10 +136,12 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 
-	// Set Color Of Current Mouse Position : eEvent::eEVT_SetCurMousePosColor
+	// Set Color Of Current Mouse Position
 	afx_msg LRESULT EvtSetCurMousePosColor(WPARAM, LPARAM lParam);
 	// Key Capture Event
 	afx_msg LRESULT EvtKeyCapture(WPARAM, LPARAM);
+	// Set Color Of Log Color
+	afx_msg LRESULT EvtSetLogMousePosColor(WPARAM, LPARAM lParam);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -151,6 +162,7 @@ public:
 	afx_msg void OnStnClickedColorHsv2();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnClose();
+	afx_msg void OnFileOption();
 
 // ======================================================================================================
 
