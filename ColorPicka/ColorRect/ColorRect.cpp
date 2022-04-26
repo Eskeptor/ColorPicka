@@ -21,6 +21,7 @@ CColorRect::~CColorRect()
 
 BEGIN_MESSAGE_MAP(CColorRect, CStatic)
 	ON_WM_PAINT()
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -176,4 +177,18 @@ void CColorRect::PreSubclassWindow()
 	ScreenToClient(&m_rtSize);
 
 	CStatic::PreSubclassWindow();
+}
+
+
+/**
+OnSize
+*/
+void CColorRect::OnSize(UINT nType, int cx, int cy)
+{
+	CStatic::OnSize(nType, cx, cy);
+
+	GetWindowRect(&m_rtSize);
+	ScreenToClient(&m_rtSize);
+
+	Invalidate();
 }

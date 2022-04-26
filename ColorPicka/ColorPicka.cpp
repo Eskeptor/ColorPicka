@@ -120,6 +120,11 @@ bool CColorPickaApp::InitOptions()
 			g_stOptions.stOpList.bIsUseList = CppUtil::INIReadInt(STR_APP_LIST, STR_KEY_LIST_USE, strIniFileName) == TRUE ? true : false;
 			g_stOptions.stOpList.nLogMax = CppUtil::INIReadInt(STR_APP_LIST, STR_KEY_LIST_LOGMAX, strIniFileName);
 		}
+
+		// System
+		{
+			g_stOptions.stOpSys.bIsMiniMode = CppUtil::INIReadInt(STR_APP_SYS, STR_KEY_SYS_MINI, strIniFileName) == TRUE ? true : false;
+		}
 	}
 
 	return true;
@@ -148,5 +153,10 @@ void CColorPickaApp::SaveOptions()
 		CppUtil::INIWriteString(STR_APP_LIST, STR_KEY_LIST_SAVELOG, strIniFileName, g_stOptions.stOpList.bIsSaveLog);
 		CppUtil::INIWriteString(STR_APP_LIST, STR_KEY_LIST_USE, strIniFileName, g_stOptions.stOpList.bIsUseList);
 		CppUtil::INIWriteString(STR_APP_LIST, STR_KEY_LIST_LOGMAX, strIniFileName, g_stOptions.stOpList.nLogMax);
+	}
+
+	// System
+	{
+		CppUtil::INIWriteString(STR_APP_SYS, STR_KEY_SYS_MINI, strIniFileName, g_stOptions.stOpSys.bIsMiniMode);
 	}
 }

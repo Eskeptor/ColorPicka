@@ -82,7 +82,10 @@ void COptionDlg::InitControls()
 					P_VAR(g_stOptions.stOpList.bIsUseList, _T("TEXT:Use;")),
 					P_VAR(g_stOptions.stOpList.nLogMax, _T("TEXT:Log Max;")),
 					P_VAR(g_stOptions.stOpList.bIsSaveLog, _T("TEXT:Log Save;")),
-				P_SUBROOT_END(),							
+				P_SUBROOT_END(),		
+				P_SUBROOT(_T("TEXT:System;")),
+					P_VAR(g_stOptions.stOpSys.bIsMiniMode, _T("TEXT:Mini Mode;")),
+				P_SUBROOT_END(),
 			P_ROOT_END(),									
 		};
 		int nSize = sizeof(GRID_STUFF) / sizeof(CBBungGrid::stProperty);

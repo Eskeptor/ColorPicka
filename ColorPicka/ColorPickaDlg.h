@@ -16,6 +16,12 @@ private:
 		Label_InfoS,
 		Label_InfoV,
 		Label_InfoHex,
+		Label_Title_InfoR1,
+		Label_Title_InfoR2,
+		Label_Title_InfoG1,
+		Label_Title_InfoG2,
+		Label_Title_InfoB1,
+		Label_Title_InfoB2,
 		LabelIdxMax
 	};
 	enum eEditIdx
@@ -46,6 +52,12 @@ private:
 		Rect_HSV2,
 		Rect_PickColor,
 		ColorRectIdxMax
+	};
+	enum eWindowData
+	{
+		Width_NotUsedList = 454,
+		Width_MiniMode = 310,
+		Height_MiniMode = 230,
 	};
 
 	struct stRGB
@@ -84,10 +96,13 @@ public:
 // Variables ============================================================================================
 private:
 	CStatic m_arrLabel[eLabelIdx::LabelIdxMax];				// Label Controls
+	CRect m_arrLabelSize[eLabelIdx::LabelIdxMax];
 	CEdit m_arrEdit[eEditIdx::EditIdxMax];					// Edit Controls
 	CColorRect m_arrRect[eColorRectIdx::ColorRectIdxMax];	// Rect(Color) Controls
 	CMouseMagnifier m_ctrlMag;								// Magnifier Control
 	CColorListCtrl m_ctrlList;								// List Control
+	CRect m_rcWindow;										// Window Rect
+
 
 protected:
 	HICON m_hIcon;
@@ -100,7 +115,8 @@ private:
 	void InitControls();
 
 	// Label Initialize
-	void InitLabel(CStatic* pCtlLabel, int nID, CString strText = _T(""));
+	void InitLabel(CStatic* pCtlLabel, int nID, CString strText);
+	void InitLabel(CStatic* pCtlLabel, int nID);
 	// Edit Initialize
 	void InitEdit(CEdit* pCtlEdit, int nID, bool bIsNumber, CString strText = _T(""));
 	// ColorRect Initialize
@@ -128,6 +144,9 @@ private:
 	void LoadColorLogData();
 	// Save Color Log Data
 	void SaveColorLogData();
+
+	// Set Mini Mode
+	void SetMiniMode(bool bSet);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);

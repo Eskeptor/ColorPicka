@@ -108,6 +108,8 @@ void CColorPickaDlg::InitControls()
 
 	// Main Window
 	{
+		GetWindowRect(&m_rcWindow);
+
 		// Title
 		{
 			CString strVersion = _T("");
@@ -117,33 +119,44 @@ void CColorPickaDlg::InitControls()
 
 		if (g_stOptions.stOpList.bIsUseList == false)
 		{
-			CRect rcWindow;
-			GetWindowRect(&rcWindow);
-			MoveWindow(0, 0, 454, rcWindow.Height());
+			MoveWindow(0, 0, eWindowData::Width_NotUsedList, m_rcWindow.Height());
 		}
 	}
 
 	// Label
 	{
-		InitLabel(&m_arrLabel[eLabelIdx::Label_InfoR], IDC_LBL_COLOR_INFO_RED);
-		InitLabel(&m_arrLabel[eLabelIdx::Label_InfoG], IDC_LBL_COLOR_INFO_GREEN);
-		InitLabel(&m_arrLabel[eLabelIdx::Label_InfoB], IDC_LBL_COLOR_INFO_BLUE);
-		InitLabel(&m_arrLabel[eLabelIdx::Label_InfoH], IDC_LBL_COLOR_INFO_H);
-		InitLabel(&m_arrLabel[eLabelIdx::Label_InfoS], IDC_LBL_COLOR_INFO_S);
-		InitLabel(&m_arrLabel[eLabelIdx::Label_InfoV], IDC_LBL_COLOR_INFO_V);
-		InitLabel(&m_arrLabel[eLabelIdx::Label_InfoHex], IDC_LBL_COLOR_INFO_HEX);
+		InitLabel(&m_arrLabel[eLabelIdx::Label_InfoR], IDC_LBL_COLOR_INFO_RED, _T(""));
+		InitLabel(&m_arrLabel[eLabelIdx::Label_InfoG], IDC_LBL_COLOR_INFO_GREEN, _T(""));
+		InitLabel(&m_arrLabel[eLabelIdx::Label_InfoB], IDC_LBL_COLOR_INFO_BLUE, _T(""));
+		InitLabel(&m_arrLabel[eLabelIdx::Label_InfoH], IDC_LBL_COLOR_INFO_H, _T(""));
+		InitLabel(&m_arrLabel[eLabelIdx::Label_InfoS], IDC_LBL_COLOR_INFO_S, _T(""));
+		InitLabel(&m_arrLabel[eLabelIdx::Label_InfoV], IDC_LBL_COLOR_INFO_V, _T(""));
+		InitLabel(&m_arrLabel[eLabelIdx::Label_InfoHex], IDC_LBL_COLOR_INFO_HEX, _T(""));
+
+		InitLabel(&m_arrLabel[eLabelIdx::Label_Title_InfoR1], IDC_LBL_COLOR_INFO_RED_1);
+		InitLabel(&m_arrLabel[eLabelIdx::Label_Title_InfoR2], IDC_LBL_COLOR_INFO_RED_2);
+		InitLabel(&m_arrLabel[eLabelIdx::Label_Title_InfoG1], IDC_LBL_COLOR_INFO_GREEN_1);
+		InitLabel(&m_arrLabel[eLabelIdx::Label_Title_InfoG2], IDC_LBL_COLOR_INFO_GREEN_2);
+		InitLabel(&m_arrLabel[eLabelIdx::Label_Title_InfoB1], IDC_LBL_COLOR_INFO_BLUE_1);
+		InitLabel(&m_arrLabel[eLabelIdx::Label_Title_InfoB2], IDC_LBL_COLOR_INFO_BLUE_2);
+
+		for (int i = 0; i < eLabelIdx::LabelIdxMax; i++)
+		{
+			m_arrLabel[i].GetWindowRect(&m_arrLabelSize[i]);
+			ScreenToClient(&m_arrLabelSize[i]);
+		}
 	}
 
 	// Edit
 	{
+		InitEdit(&m_arrEdit[eEditIdx::Edit_Hex1], IDC_EDIT_H_R_HEX, false);
+		InitEdit(&m_arrEdit[eEditIdx::Edit_Hex2], IDC_EDIT_H_H_HEX, false);
 		InitEdit(&m_arrEdit[eEditIdx::Edit_Red1], IDC_EDIT_H_R_RED, true);
 		InitEdit(&m_arrEdit[eEditIdx::Edit_Red2], IDC_EDIT_R_H_RED, true);
 		InitEdit(&m_arrEdit[eEditIdx::Edit_Green1], IDC_EDIT_H_R_GREEN, true);
 		InitEdit(&m_arrEdit[eEditIdx::Edit_Green2], IDC_EDIT_R_H_GREEN, true);
 		InitEdit(&m_arrEdit[eEditIdx::Edit_Blue1], IDC_EDIT_H_R_BLUE, true);
-		InitEdit(&m_arrEdit[eEditIdx::Edit_Blue2], IDC_EDIT_R_H_BLUE, true);
-		InitEdit(&m_arrEdit[eEditIdx::Edit_Hex1], IDC_EDIT_H_R_HEX, false);
-		InitEdit(&m_arrEdit[eEditIdx::Edit_Hex2], IDC_EDIT_H_H_HEX, false);
+		InitEdit(&m_arrEdit[eEditIdx::Edit_Blue2], IDC_EDIT_R_H_BLUE, true);	
 		InitEdit(&m_arrEdit[eEditIdx::Edit_Hue1], IDC_EDIT_H_H_H, true);
 		InitEdit(&m_arrEdit[eEditIdx::Edit_Hue2], IDC_EDIT_R_H_H, true);
 		InitEdit(&m_arrEdit[eEditIdx::Edit_Saturation1], IDC_EDIT_H_H_S, true);
@@ -198,6 +211,11 @@ void CColorPickaDlg::InitControls()
 			m_ctrlList.ShowWindow(SW_HIDE);
 		}
 	}
+
+	// Mini Mode
+	{
+		SetMiniMode(g_stOptions.stOpSys.bIsMiniMode);
+	}
 }
 
 
@@ -216,6 +234,23 @@ void CColorPickaDlg::InitLabel(CStatic* pCtlLabel, int nID, CString strText)
 	{
 		pCtlLabel->SubclassDlgItem(nID, this);
 		pCtlLabel->SetWindowText(strText);
+	}
+}
+
+
+/**
+Label Initialize
+@access		private
+@param		pCtlLabel		Label Control(CStatic)
+@param		nID				Label's ID
+@return
+*/
+void CColorPickaDlg::InitLabel(CStatic* pCtlLabel, int nID)
+{
+	if (pCtlLabel != nullptr &&
+		nID > 0)
+	{
+		pCtlLabel->SubclassDlgItem(nID, this);
 	}
 }
 
@@ -934,6 +969,70 @@ void CColorPickaDlg::OnFileOption()
 
 	if (nLogMax != g_stOptions.stOpList.nLogMax)
 		m_ctrlList.SetItemMax(g_stOptions.stOpList.nLogMax);
+
+	SetMiniMode(g_stOptions.stOpSys.bIsMiniMode);
 }
 
 
+/**
+Set Mini Mode
+@access		private
+@param		bSet		Mini Mode Set
+@return		
+*/
+void CColorPickaDlg::SetMiniMode(bool bSet)
+{
+	int nWindowWidth = 0;
+	int nWindowHeight = 0;
+	int nColorInfoX1 = 0;
+	int nColorInfoX2 = 0;
+	int nColorInfoX3 = 0;
+
+	CRect rcWindow;
+	GetWindowRect(&rcWindow);
+
+	CRect rcMag;
+	m_ctrlMag.GetWindowRect(&rcMag);
+	ScreenToClient(&rcMag);
+	CRect rcPick;
+	m_arrRect[eColorRectIdx::Rect_PickColor].GetWindowRect(&rcPick);
+	ScreenToClient(&rcPick);
+
+	if (bSet)
+	{
+		nWindowWidth = eWindowData::Width_MiniMode;
+		nWindowHeight = eWindowData::Height_MiniMode;
+
+		nColorInfoX1 = 194;
+		nColorInfoX2 = 156;
+		nColorInfoX3 = 180;
+
+		m_arrRect[eColorRectIdx::Rect_PickColor].MoveWindow(rcPick.left, rcMag.top + (rcMag.Width() / 2), rcMag.Height(), rcMag.Width() / 2);
+	}
+	else
+	{
+		nWindowWidth = m_rcWindow.Width();
+		nWindowHeight = m_rcWindow.Height();
+
+		nColorInfoX1 = m_arrLabelSize[eLabelIdx::Label_InfoR].left;
+		nColorInfoX2 = m_arrLabelSize[eLabelIdx::Label_Title_InfoR1].left;
+		nColorInfoX3 = m_arrLabelSize[eLabelIdx::Label_Title_InfoR2].left;
+
+		m_arrRect[eColorRectIdx::Rect_PickColor].MoveWindow(rcPick.left, rcMag.top, rcMag.Width(), rcMag.Width());
+	}
+
+	m_arrLabel[eLabelIdx::Label_InfoR].MoveWindow(nColorInfoX1, m_arrLabelSize[eLabelIdx::Label_InfoR].top, m_arrLabelSize[eLabelIdx::Label_InfoR].Width(), m_arrLabelSize[eLabelIdx::Label_InfoR].Height());
+	m_arrLabel[eLabelIdx::Label_Title_InfoR1].MoveWindow(nColorInfoX2, m_arrLabelSize[eLabelIdx::Label_Title_InfoR1].top, m_arrLabelSize[eLabelIdx::Label_Title_InfoR1].Width(), m_arrLabelSize[eLabelIdx::Label_Title_InfoR1].Height());
+	m_arrLabel[eLabelIdx::Label_Title_InfoR2].MoveWindow(nColorInfoX3, m_arrLabelSize[eLabelIdx::Label_Title_InfoR2].top, m_arrLabelSize[eLabelIdx::Label_Title_InfoR2].Width(), m_arrLabelSize[eLabelIdx::Label_Title_InfoR2].Height());
+
+	m_arrLabel[eLabelIdx::Label_InfoG].MoveWindow(nColorInfoX1, m_arrLabelSize[eLabelIdx::Label_InfoG].top, m_arrLabelSize[eLabelIdx::Label_InfoG].Width(), m_arrLabelSize[eLabelIdx::Label_InfoG].Height());
+	m_arrLabel[eLabelIdx::Label_Title_InfoG1].MoveWindow(nColorInfoX2, m_arrLabelSize[eLabelIdx::Label_Title_InfoG1].top, m_arrLabelSize[eLabelIdx::Label_Title_InfoG1].Width(), m_arrLabelSize[eLabelIdx::Label_Title_InfoG1].Height());
+	m_arrLabel[eLabelIdx::Label_Title_InfoG2].MoveWindow(nColorInfoX3, m_arrLabelSize[eLabelIdx::Label_Title_InfoG2].top, m_arrLabelSize[eLabelIdx::Label_Title_InfoG2].Width(), m_arrLabelSize[eLabelIdx::Label_Title_InfoG2].Height());
+
+	m_arrLabel[eLabelIdx::Label_InfoB].MoveWindow(nColorInfoX1, m_arrLabelSize[eLabelIdx::Label_InfoB].top, m_arrLabelSize[eLabelIdx::Label_InfoB].Width(), m_arrLabelSize[eLabelIdx::Label_InfoB].Height());
+	m_arrLabel[eLabelIdx::Label_Title_InfoB1].MoveWindow(nColorInfoX2, m_arrLabelSize[eLabelIdx::Label_Title_InfoB1].top, m_arrLabelSize[eLabelIdx::Label_Title_InfoB1].Width(), m_arrLabelSize[eLabelIdx::Label_Title_InfoB1].Height());
+	m_arrLabel[eLabelIdx::Label_Title_InfoB2].MoveWindow(nColorInfoX3, m_arrLabelSize[eLabelIdx::Label_Title_InfoB2].top, m_arrLabelSize[eLabelIdx::Label_Title_InfoB2].Width(), m_arrLabelSize[eLabelIdx::Label_Title_InfoB2].Height());
+
+	MoveWindow(rcWindow.left, rcWindow.top, nWindowWidth, nWindowHeight);
+
+}
