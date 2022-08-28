@@ -25,7 +25,7 @@ public:
 	// File Write
 	static bool WriteFile(CString strPath, CString strText, int nEncode);
 	static bool WriteFileANSI(CString strPath, CString strText);
-	static bool WriteFileUTF8(CString strPath, CString strText, bool bWithBOM);
+	static bool WriteFileUTF8(CString strPath, CString strText);
 	static bool WriteFileUnicode(CString strPath, CString strText);
 	// File Read (EUC-KR)
 	static CString ReadFileANSI(CString strPath);
@@ -41,6 +41,8 @@ public:
 	static int GetFileSize(CString strPath);
 	// File Exist
 	static bool FileCheck(CString strFilePath);
+	// Get File Extension
+	static CString GetFileExtension(CString strFilePath);
 
 	// Get File Time Info
 	static void GetFileTimes(CString strPath, SYSTEMTIME* outCreate, SYSTEMTIME* outAccess, SYSTEMTIME* outWrite);

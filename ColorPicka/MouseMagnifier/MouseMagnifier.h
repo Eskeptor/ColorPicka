@@ -51,6 +51,7 @@ private:
 	UINT m_nEvtSendColorID;				// Send Color Event ID
 	COLORREF m_clrCurCursorPosColor;	// Color of Current Mouse Position
 	bool m_bIsIncludeWindow;			// Window Not Include Option
+	bool m_bCapture;					// Zoom Capture Flag
 
 	stThr m_stRefreshThread;
 
@@ -91,6 +92,10 @@ public:
 	void SetEventIDSendColor(UINT nID);
 	// Set Window Include Option
 	void SetIncludeWindow(bool bInclude);
+	// Start Mouse Capture
+	void StartCapture();
+	// Stop Mouse Capture
+	void StopCapture();
 
 // ======================================================================================================
 	

@@ -13,6 +13,9 @@
 #endif
 
 
+/**
+Constructor
+*/
 CColorPickaDlg::CColorPickaDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_COLORPICKA_DIALOG, pParent)
 {
@@ -20,6 +23,9 @@ CColorPickaDlg::CColorPickaDlg(CWnd* pParent /*=nullptr*/)
 }
 
 
+/**
+Destructor
+*/
 void CColorPickaDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
@@ -49,6 +55,9 @@ BEGIN_MESSAGE_MAP(CColorPickaDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
+/**
+OnInitDialog()
+*/
 BOOL CColorPickaDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
@@ -63,6 +72,9 @@ BOOL CColorPickaDlg::OnInitDialog()
 }
 
 
+/**
+OnPaint()
+*/
 void CColorPickaDlg::OnPaint()
 {
 	if (IsIconic())
@@ -87,6 +99,9 @@ void CColorPickaDlg::OnPaint()
 }
 
 
+/**
+OnQueryDragIcon()
+*/
 HCURSOR CColorPickaDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
@@ -613,7 +628,18 @@ Click : Hex1 Color
 */
 void CColorPickaDlg::OnStnClickedColorHex1()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_ctrlMag.StopCapture();
+
+	COLORREF clrSel = 0;
+	if (ShowColorPicker(clrSel))
+	{
+		CString strHex = _T("");
+		strHex.Format(_T("#%X"), CppUtil::RGBToHex(GetRValue(clrSel), GetGValue(clrSel), GetBValue(clrSel)));
+		m_arrEdit[eEditIdx::Edit_Hex1].SetWindowTextW(strHex);
+
+		m_arrRect[Rect_Hex1].SetBackgroundColor(clrSel);
+	}
+	m_ctrlMag.StartCapture();
 }
 
 
@@ -625,7 +651,23 @@ Click : RGB1 Color
 */
 void CColorPickaDlg::OnStnClickedColorRgb1()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_ctrlMag.StopCapture();
+	COLORREF clrSel = 0;
+	if (ShowColorPicker(clrSel))
+	{
+		CString strData = _T("");
+		strData.Format(_T("%d"), GetRValue(clrSel));
+		m_arrEdit[eEditIdx::Edit_Red1].SetWindowText(strData);
+
+		strData.Format(_T("%d"), GetGValue(clrSel));
+		m_arrEdit[eEditIdx::Edit_Green1].SetWindowText(strData);
+
+		strData.Format(_T("%d"), GetBValue(clrSel));
+		m_arrEdit[eEditIdx::Edit_Blue1].SetWindowText(strData);
+
+		m_arrRect[Rect_RGB1].SetBackgroundColor(clrSel);
+	}
+	m_ctrlMag.StartCapture();
 }
 
 
@@ -637,7 +679,17 @@ Click : Hex2 Color
 */
 void CColorPickaDlg::OnStnClickedColorHex2()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_ctrlMag.StopCapture();
+	COLORREF clrSel = 0;
+	if (ShowColorPicker(clrSel))
+	{
+		CString strHex = _T("");
+		strHex.Format(_T("#%X"), CppUtil::RGBToHex(GetRValue(clrSel), GetGValue(clrSel), GetBValue(clrSel)));
+		m_arrEdit[eEditIdx::Edit_Hex2].SetWindowTextW(strHex);
+
+		m_arrRect[Rect_Hex2].SetBackgroundColor(clrSel);
+	}
+	m_ctrlMag.StartCapture();
 }
 
 
@@ -649,7 +701,26 @@ Click : HSV1 Color
 */
 void CColorPickaDlg::OnStnClickedColorHsv1()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_ctrlMag.StopCapture();
+	COLORREF clrSel = 0;
+	if (ShowColorPicker(clrSel))
+	{
+		stHSV hsvData;
+		CppUtil::RGBToHSV(GetRValue(clrSel), GetGValue(clrSel), GetBValue(clrSel), hsvData.nH, hsvData.nS, hsvData.nV);
+
+		CString strData = _T("");
+		strData.Format(_T("%d"), hsvData.nH);
+		m_arrEdit[eEditIdx::Edit_Hue1].SetWindowText(strData);
+
+		strData.Format(_T("%d"), hsvData.nS);
+		m_arrEdit[eEditIdx::Edit_Saturation1].SetWindowText(strData);
+
+		strData.Format(_T("%d"), hsvData.nV);
+		m_arrEdit[eEditIdx::Edit_Value1].SetWindowText(strData);
+
+		m_arrRect[Rect_HSV1].SetBackgroundColor(clrSel);
+	}
+	m_ctrlMag.StartCapture();
 }
 
 
@@ -661,7 +732,23 @@ Click : RGB2 Color
 */
 void CColorPickaDlg::OnStnClickedColorRgb2()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_ctrlMag.StopCapture();
+	COLORREF clrSel = 0;
+	if (ShowColorPicker(clrSel))
+	{
+		CString strData = _T("");
+		strData.Format(_T("%d"), GetRValue(clrSel));
+		m_arrEdit[eEditIdx::Edit_Red2].SetWindowText(strData);
+
+		strData.Format(_T("%d"), GetGValue(clrSel));
+		m_arrEdit[eEditIdx::Edit_Green2].SetWindowText(strData);
+
+		strData.Format(_T("%d"), GetBValue(clrSel));
+		m_arrEdit[eEditIdx::Edit_Blue2].SetWindowText(strData);
+
+		m_arrRect[Rect_RGB2].SetBackgroundColor(clrSel);
+	}
+	m_ctrlMag.StartCapture();
 }
 
 
@@ -673,9 +760,28 @@ Click : HSV2 Color
 */
 void CColorPickaDlg::OnStnClickedColorHsv2()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-}
+	m_ctrlMag.StopCapture();
+	COLORREF clrSel = 0;
+	if (ShowColorPicker(clrSel))
+	{
+		stHSV hsvData;
+		CppUtil::RGBToHSV(GetRValue(clrSel), GetGValue(clrSel), GetBValue(clrSel), hsvData.nH, hsvData.nS, hsvData.nV);
 
+		CString strData = _T("");
+		strData.Format(_T("%d"), hsvData.nH);
+		m_arrEdit[eEditIdx::Edit_Hue2].SetWindowText(strData);
+
+		strData.Format(_T("%d"), hsvData.nS);
+		m_arrEdit[eEditIdx::Edit_Saturation2].SetWindowText(strData);
+
+		strData.Format(_T("%d"), hsvData.nV);
+		m_arrEdit[eEditIdx::Edit_Value2].SetWindowText(strData);
+
+		m_arrRect[Rect_HSV2].SetBackgroundColor(clrSel);
+	}
+	m_ctrlMag.StartCapture();
+}
+	
 
 /**
 PreTranslateMessage
@@ -954,6 +1060,26 @@ void CColorPickaDlg::SaveColorLogData()
 	}
 
 	CppUtil::INIWriteString(STR_APP_LIST, STR_KEY_LIST_LOGDATA, strIniFileName, strColor);
+}
+
+
+/**
+Show Color Picker Dialog
+@access		private
+@param		outClrSel	Selected Color
+@return		Color Dialog Result == Ok
+*/
+bool CColorPickaDlg::ShowColorPicker(COLORREF& outClrSel)
+{
+	CMFCColorDialog dlg;
+
+	if (dlg.DoModal() == IDOK)
+	{
+		outClrSel = dlg.GetColor();
+		return true;
+	}
+	
+	return false;
 }
 
 

@@ -144,6 +144,8 @@ private:
 	void LoadColorLogData();
 	// Save Color Log Data
 	void SaveColorLogData();
+	// Show Color Picker Dialog
+	bool ShowColorPicker(COLORREF& outClrSel);
 
 	// Set Mini Mode
 	void SetMiniMode(bool bSet);

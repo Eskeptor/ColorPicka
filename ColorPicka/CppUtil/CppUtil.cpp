@@ -4,6 +4,7 @@
 #include <codecvt>
 #include <fstream>
 #include <sstream>
+#include <atlstr.h>
 
 /**
 Get Exe Full Path
@@ -188,51 +189,52 @@ bool CppUtil::WriteFile(CString strPath, CString strText, int nEncode)
 
 	switch (nEncode)
 	{
-		case 0:		// ANSI
-			WriteFileANSI(strPath, strText);
-			break;
-		case 1:		// UTF-8
-			WriteFileUTF8(strPath, strText, true);
-			break;
-		case 2:		// Unicode
-		case 3:
-			WriteFileUnicode(strPath, strText);
-			break;
+	case 0:		// ANSI
+		bResult = WriteFileANSI(strPath, strText);
+		break;
+	case 1:		// UTF-8
+		bResult = WriteFileUTF8(strPath, strText);
+		break;
+	case 2:		// Unicode
+	case 3:
+		bResult = WriteFileUnicode(strPath, strText);
+		break;
 	}
 
 	return bResult;
 }
 bool CppUtil::WriteFileANSI(CString strPath, CString strText)
 {
-	bool bResult = false;
-
 	CFile file;
 	if (file.Open(strPath, CFile::modeCreate | CFile::modeWrite) == FALSE)
 	{
 		return false;
 	}
-	file.Write(CT2A(strText), strText.GetLength());
+
+	CT2CA strANSI(strText);
+	file.Write(strANSI, ::strlen(strANSI));
 	file.Close();
-	
-	return bResult;
+
+	return true;
 }
-bool CppUtil::WriteFileUTF8(CString strPath, CString strText, bool bWithBOM)
+bool CppUtil::WriteFileUTF8(CString strPath, CString strText)
 {
-	bool bResult = false;
-
 	CFile file;
 	if (file.Open(strPath, CFile::modeCreate | CFile::modeWrite) == FALSE)
 	{
 		return false;
 	}
-	file.Write(strText, strText.GetLength() * sizeof(TCHAR));
+
+	CT2CA strUTF8(strText, CP_UTF8);
+	//CStringA strUTF8{ CT2A(strText, CP_UTF8) };
+	//file.Write(strText, strUTF8.GetLength());
+	file.Write(strUTF8, ::strlen(strUTF8));
 	file.Close();
 
-	return bResult;
+	return true;
 }
 bool CppUtil::WriteFileUnicode(CString strPath, CString strText)
 {
-	bool bResult = false;
 	WORD wUnicodeMark = 0xFEFF;
 
 	CFile file;
@@ -244,7 +246,7 @@ bool CppUtil::WriteFileUnicode(CString strPath, CString strText)
 	file.Write(strText, strText.GetLength() * sizeof(TCHAR));
 	file.Close();
 
-	return bResult;
+	return true;
 }
 
 
@@ -364,15 +366,15 @@ int CppUtil::CheckFileEncoding(CString strPath)
 				lpHeader[1] == uniTxt[1])
 				nEncode = 3;	// Unicode
 			else if (lpHeader[0] == endianTxt[0] &&
-					 lpHeader[1] == endianTxt[1])
+				lpHeader[1] == endianTxt[1])
 				nEncode = 2;	// Unicode (Big Endian)
 			else if (lpHeader[0] == utf8Txt[0] &&
-					 lpHeader[1] == utf8Txt[1])
+				lpHeader[1] == utf8Txt[1])
 				nEncode = 1;	// UTF8 with BOM
 			else
 				nEncode = 0;	// ANSI
 		}
-		
+
 		delete[] lpHeader;
 	}
 	catch (CException& e)
@@ -454,6 +456,25 @@ bool CppUtil::FileCheck(CString strFilePath)
 		bResult = true;
 
 	return bResult;
+}
+
+
+/**
+Get File Extension
+@param		strFilePath		File Path
+@return		Extension
+*/
+CString CppUtil::GetFileExtension(CString strFilePath)
+{
+	CString strResult = _T("");
+
+	int nFind = strFilePath.ReverseFind(_T('.'));
+	if (nFind != -1)
+	{
+		strResult = strFilePath.Mid(nFind + 1);
+	}
+
+	return strResult;
 }
 
 
@@ -645,14 +666,14 @@ void CppUtil::RGBToHSV(const int& nR, const int& nG, const int& nB, int& nOutH, 
 		else if (dMax == dB)
 			nOutH = (int)(60.0 * (((dR - dG) / dDiff) + 4.0));
 
-		if (dMax > 0.0) 
+		if (dMax > 0.0)
 			nOutS = (int)round((dDiff / dMax * 100.0));
-		else 
+		else
 			nOutS = 0;
 
 		nOutV = (int)round((dMax * 100.0));
 	}
-	else 
+	else
 	{
 		nOutH = 0;
 		nOutS = 0;
@@ -689,6 +710,7 @@ HSV To RGB
 @param		nOutR		Red (Out Data)
 @param		nOutG		Green (Out Data)
 @param		nOutB		Blue (Out Data)
+@link		https://stackoverflow.com/questions/3018313/algorithm-to-convert-rgb-to-hsv-and-hsv-to-rgb-in-range-0-255-for-both
 */
 void CppUtil::HSVToRGB(const int& nH, const int& nS, const int& nV, int& nOutR, int& nOutG, int& nOutB)
 {
@@ -700,57 +722,49 @@ void CppUtil::HSVToRGB(const int& nH, const int& nS, const int& nV, int& nOutR, 
 		nV < 0)
 		return;
 
-	double dRange = ((double)(nH % 60) / 60.0) * 255.0;
-	double dH = 0.0;
-	double dP = 0.0;
-	double dQ = 0.0;
-	double dT = 0.0;
+	double dH = (double)nH;
+	double dS = (double)nS / 100.0;
+	double dV = (double)nV / 100.0;
 
-	dH = (double)nH;
-	if (dH >= 360.0)
-		dH = 0.0;
-	dH /= 60.0;
+	double dHH = dH >= 360.0 ? 0.0 : dH / 60.0;
+	long lI = (long)dHH;
+	double dFF = dHH - lI;
+	double dP = dV * (1.0 - dS);
+	double dQ = dV * (1.0 - (dS * dFF));
+	double dT = dV * (1.0 - (dS * (1.0 - dFF)));
 
-	int nSel = (int)dH;
-
-	double dVDiv100 = (double)nV / 100.0;
-	double dSDiv100 = (double)nS / 100.0;
-	dP = dVDiv100 * (1.0 - dSDiv100);
-	dQ = dVDiv100 * (1.0 - (dSDiv100 * (dH - (double)nSel)));
-	dT = dVDiv100 * (1.0 - (dSDiv100 * (1.0 - (dH - (double)nSel))));
-
-	switch (nSel)
+	switch (lI)
 	{
 		case 0:
-			nOutR = (int)round(dVDiv100 * 255.0);
-			nOutG = (int)round(dT * 255.0);
-			nOutB = (int)round(dP * 255.0);
+			nOutR = (int)(dV * 255.0);
+			nOutG = (int)(dT * 255.0);
+			nOutB = (int)(dP * 255.0);
 			break;
 		case 1:
-			nOutR = (int)round(dQ * 255.0);
-			nOutG = (int)round(dVDiv100 * 255.0);
-			nOutB = (int)round(dP * 255.0);
+			nOutR = (int)(dQ * 255.0);
+			nOutG = (int)(dV * 255.0);
+			nOutB = (int)(dP * 255.0);
 			break;
 		case 2:
-			nOutR = (int)round(dP * 255.0);
-			nOutG = (int)round(dVDiv100 * 255.0);
-			nOutB = (int)round(dT * 255.0);
+			nOutR = (int)(dP * 255.0);
+			nOutG = (int)(dV * 255.0);
+			nOutB = (int)(dT * 255.0);
 			break;
 		case 3:
-			nOutR = (int)round(dP * 255.0);
-			nOutG = (int)round(dQ * 255.0);
-			nOutB = (int)round(dVDiv100 * 255.0);
+			nOutR = (int)(dP * 255.0);
+			nOutG = (int)(dQ * 255.0);
+			nOutB = (int)(dV * 255.0);
 			break;
 		case 4:
-			nOutR = (int)round(dT * 255.0);
-			nOutG = (int)round(dP * 255.0);
-			nOutB = (int)round(dVDiv100 * 255.0);
+			nOutR = (int)(dT * 255.0);
+			nOutG = (int)(dP * 255.0);
+			nOutB = (int)(dV * 255.0);
 			break;
 		case 5:
 		default:
-			nOutR = (int)round(dVDiv100 * 255.0);
-			nOutG = (int)round(dP * 255.0);
-			nOutB = (int)round(dQ * 255.0);
+			nOutR = (int)(dV * 255.0);
+			nOutG = (int)(dP * 255.0);
+			nOutB = (int)(dQ * 255.0);
 			break;
 	}
 }

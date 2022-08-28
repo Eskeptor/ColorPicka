@@ -14,6 +14,7 @@ CMouseMagnifier::CMouseMagnifier()
 	, m_nEvtSendColorID(0)
 	, m_clrCurCursorPosColor(0)
 	, m_bIsIncludeWindow(true)
+	, m_bCapture(true)
 {
 
 }
@@ -226,7 +227,8 @@ UINT CMouseMagnifier::ThreadMousePosition(LPVOID pParam)
 				}
 			}
 
-			if (bIsIncludeWindow)
+			if (bIsIncludeWindow &&
+				pMain->m_bCapture)
 			{
 				if (ptMouse.x != pMain->m_ptMouse.x ||
 					ptMouse.y != pMain->m_ptMouse.y)
@@ -302,4 +304,28 @@ Set Window Include Option
 void CMouseMagnifier::SetIncludeWindow(bool bInclude)
 {
 	m_bIsIncludeWindow = bInclude;
+}
+
+
+/**
+Start Mouse Capture
+@access		public
+@param
+@return
+*/
+void CMouseMagnifier::StartCapture()
+{
+	m_bCapture = true;
+}
+
+
+/**
+Stop Mouse Capture
+@access		public
+@param
+@return
+*/
+void CMouseMagnifier::StopCapture()
+{
+	m_bCapture = false;
 }
