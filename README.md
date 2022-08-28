@@ -10,8 +10,8 @@ Color Picker Program (MFC, C++)
  ++) Try using a color converter.
 ```
 ## What's New? (Last updated 2022.08.28 - Build 1.1.2.0)
-```
 ![Add Color Picker](./ScreenShot/ScreenShot02.png)
+```
  1) Add Color Picker - Color Convertor
  2) Algorithm Change - HSV to RGB
     (https://stackoverflow.com/a/6930407)
