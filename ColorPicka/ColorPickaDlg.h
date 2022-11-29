@@ -121,6 +121,9 @@ private:
 	void InitEdit(CEdit* pCtlEdit, int nID, bool bIsNumber, CString strText = _T(""));
 	// ColorRect Initialize
 	void InitColorRect(CColorRect* pCtlRect, int nID, int nR = 255, int nG = 255, int nB = 255);
+	
+	// Initial Data Setting 
+	void InitData();
 
 	// Get Version
 	CString GetVersion();

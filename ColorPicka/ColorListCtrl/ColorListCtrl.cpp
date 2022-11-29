@@ -9,6 +9,8 @@ CColorListCtrl::CColorListCtrl()
     : m_nItemSize(eDefaultData::Default_ItemSize)
     , m_nEvtSendColorID(0)
     , m_nItemMax(20)
+    , m_nCurSel(-1)
+    , m_arrClr{ RGB(210, 245, 245), RGB(210, 245, 245) }
 {
 
 }
@@ -21,6 +23,7 @@ CColorListCtrl::~CColorListCtrl()
 BEGIN_MESSAGE_MAP(CColorListCtrl, CListCtrl)
     ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, &CColorListCtrl::OnNMCustomdraw)
     ON_NOTIFY_REFLECT(NM_CLICK, &CColorListCtrl::OnNMClick)
+    ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 
@@ -112,28 +115,28 @@ void CColorListCtrl::SetItemSize(int nSize)
 
 
 /**
-Set Item Background Color
+Set Selected Item Background Color
 @access     public
 @param      nIdx        Item Index (-1 : All Items)
 @param      clrBack     Background Color
 @return
 */
-void CColorListCtrl::SetItemBgColor(int nIdx, COLORREF clrBack)
+void CColorListCtrl::SetSelectedItemBgColor(COLORREF clrBack)
 {
-
+    m_arrClr[eColorIdx::Selected_BackColor] = clrBack;
 }
 
 
 /**
-Set Item Foreground Color
+Set Selected Item Foreground Color
 @access     public
 @param      nIdx        Item Index (-1 : All Items)
 @param      clrBack     Foreground Color
 @return
 */
-void CColorListCtrl::SetItemFrColor(int nIdx, COLORREF clrFore)
+void CColorListCtrl::SetSelectedItemFrColor(COLORREF clrFore)
 {
-
+    m_arrClr[eColorIdx::Selected_ForeColor] = clrFore;
 }
 
 
@@ -142,30 +145,52 @@ OnNMCustomdraw
 */
 void CColorListCtrl::OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult)
 {
+    // TODO 아이템 선택 후 Text 내용 안보이게 수정
     NMLVCUSTOMDRAW* pLVCD = reinterpret_cast<NMLVCUSTOMDRAW*>(pNMHDR);
-    
-    if (pLVCD->nmcd.dwDrawStage == CDDS_PREPAINT)
+    *pResult = CDRF_DODEFAULT;
+    pLVCD->nmcd.uItemState = CDIS_DEFAULT;
+
+    switch (pLVCD->nmcd.dwDrawStage)
     {
-        *pResult = CDRF_NOTIFYITEMDRAW;
-    }
-    else if (pLVCD->nmcd.dwDrawStage == CDDS_ITEMPREPAINT)
-    {
-        CString strColor = GetItemText(pLVCD->nmcd.dwItemSpec, 0);
-        if (strColor.IsEmpty() == false &&
-            strColor.GetAt(0) == _T('!'))
+        case CDDS_PREPAINT:
         {
-            CString strRGB = strColor.Mid(1, strColor.GetLength() - 1);
-            COLORREF clrRGB = _ttoi(strRGB);
-
-            pLVCD->clrText = clrRGB;
-            pLVCD->clrTextBk = clrRGB;
+            *pResult = CDRF_NOTIFYITEMDRAW;
+            break;
         }
+        case CDDS_ITEMPREPAINT:
+        {
+            *pResult = CDRF_NOTIFYSUBITEMDRAW;
+            break;
+        }
+        case CDDS_ITEMPREPAINT | CDDS_SUBITEM:
+        {
+            if (m_nCurSel == pLVCD->nmcd.dwItemSpec)
+            {
+                pLVCD->clrText = m_arrClr[eColorIdx::Selected_ForeColor];
+                pLVCD->clrTextBk = m_arrClr[eColorIdx::Selected_BackColor];
+            }
+            else
+            {
+                CString strColor = GetItemText(pLVCD->nmcd.dwItemSpec, 0);
+                if (strColor.IsEmpty() == false &&
+                    strColor.GetAt(0) == _T('!'))
+                {
+                    CString strRGB = strColor.Mid(1, strColor.GetLength() - 1);
+                    COLORREF clrRGB = _ttoi(strRGB);
 
-        *pResult = CDRF_DODEFAULT;
-    }
-    else
-    {
-        *pResult = 0;
+                    pLVCD->clrText = clrRGB;
+                    pLVCD->clrTextBk = clrRGB;
+                }
+            }
+            
+            *pResult = CDRF_NOTIFYPOSTPAINT;
+            break;
+        }
+        default:
+        {
+            *pResult = CDRF_DODEFAULT;
+            break;
+        }
     }
 }
 
@@ -197,11 +222,14 @@ void CColorListCtrl::OnNMClick(NMHDR* pNMHDR, LRESULT* pResult)
     {
         CString strColor = GetItemText(pNMItemActivate->iItem, 0);
         int nColor = _ttoi(strColor.Mid(1, strColor.GetLength() - 1));
+        m_nCurSel = pNMItemActivate->iItem;
 
         if (m_nEvtSendColorID > 0)
         {
             ::PostMessage(GetParent()->m_hWnd, m_nEvtSendColorID, 0, nColor);
         }
+
+        Invalidate();
     }
 
     *pResult = 0;
@@ -254,4 +282,27 @@ void CColorListCtrl::ReItemMaxSize()
         }
         Invalidate();
     }
+}
+
+
+/**
+OnKeyDown
+*/
+void CColorListCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+    if (m_nCurSel >= 0 &&
+        m_nCurSel < GetItemCount())
+    {
+        if (nChar == VK_DELETE)
+        {
+            if (DeleteItem(m_nCurSel))
+            {
+                m_nCurSel = -1;
+
+                Invalidate();
+            }
+        }
+    }
+
+    CListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
 }

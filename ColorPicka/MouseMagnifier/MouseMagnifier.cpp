@@ -159,6 +159,7 @@ BOOL CMouseMagnifier::PreCreateWindow(CREATESTRUCT& cs)
 	if (m_stRefreshThread.thrRefresh == nullptr)
 	{
 		m_stRefreshThread.thrRefresh = AfxBeginThread(ThreadMousePosition, this);
+
 		if (m_stRefreshThread.thrRefresh == nullptr)
 		{
 			MessageBox(_T("Refresh Thread Create Fail"), _T("Error"));
@@ -180,6 +181,7 @@ void CMouseMagnifier::PreSubclassWindow()
 	if (m_stRefreshThread.thrRefresh == nullptr)
 	{
 		m_stRefreshThread.thrRefresh = AfxBeginThread(ThreadMousePosition, this);
+
 		if (m_stRefreshThread.thrRefresh == nullptr)
 		{
 			MessageBox(_T("Refresh Thread Create Fail"), _T("Error"));

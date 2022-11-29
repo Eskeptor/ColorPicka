@@ -66,6 +66,7 @@ BOOL CColorPickaDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		
 
 	InitControls();
+	InitData();
 	SetKeyboardHook();
 
 	return TRUE;  
@@ -312,6 +313,63 @@ void CColorPickaDlg::InitColorRect(CColorRect* pCtlRect, int nID, int nR, int nG
 	{
 		pCtlRect->SubclassDlgItem(nID, this);
 		pCtlRect->SetBackgroundColor(nR, nG, nB);
+	}
+}
+
+
+/**
+Initial Data Setting
+@access		private
+@param
+@return
+*/
+void CColorPickaDlg::InitData()
+{
+	// Hex <-> RGB
+	{
+		// Hex
+		{
+			m_arrEdit[eEditIdx::Edit_Hex1].SetWindowText(_T("#FFFFFF"));
+		}
+
+		// RGB
+		{
+			m_arrEdit[eEditIdx::Edit_Red1].SetWindowText(_T("255"));
+			m_arrEdit[eEditIdx::Edit_Green1].SetWindowText(_T("255"));
+			m_arrEdit[eEditIdx::Edit_Blue1].SetWindowText(_T("255"));
+		}
+	}
+
+	// Hex <-> HSV
+	{
+		// Hex
+		{
+			m_arrEdit[eEditIdx::Edit_Hex2].SetWindowText(_T("#FFFFFF"));
+		}
+
+		// HSV
+		{
+			m_arrEdit[eEditIdx::Edit_Hue1].SetWindowText(_T("0"));
+			m_arrEdit[eEditIdx::Edit_Saturation1].SetWindowText(_T("0"));
+			m_arrEdit[eEditIdx::Edit_Value1].SetWindowText(_T("100"));
+		}
+	}
+
+	// RGB <-> HSV
+	{
+		// RGB
+		{
+			m_arrEdit[eEditIdx::Edit_Red2].SetWindowText(_T("255"));
+			m_arrEdit[eEditIdx::Edit_Green2].SetWindowText(_T("255"));
+			m_arrEdit[eEditIdx::Edit_Blue2].SetWindowText(_T("255"));
+		}
+
+		// HSV
+		{
+			m_arrEdit[eEditIdx::Edit_Hue2].SetWindowText(_T("0"));
+			m_arrEdit[eEditIdx::Edit_Saturation2].SetWindowText(_T("0"));
+			m_arrEdit[eEditIdx::Edit_Value2].SetWindowText(_T("100"));
+		}
 	}
 }
 
@@ -629,8 +687,8 @@ Click : Hex1 Color
 void CColorPickaDlg::OnStnClickedColorHex1()
 {
 	m_ctrlMag.StopCapture();
-
 	COLORREF clrSel = 0;
+
 	if (ShowColorPicker(clrSel))
 	{
 		CString strHex = _T("");
@@ -653,6 +711,7 @@ void CColorPickaDlg::OnStnClickedColorRgb1()
 {
 	m_ctrlMag.StopCapture();
 	COLORREF clrSel = 0;
+
 	if (ShowColorPicker(clrSel))
 	{
 		CString strData = _T("");
@@ -681,6 +740,7 @@ void CColorPickaDlg::OnStnClickedColorHex2()
 {
 	m_ctrlMag.StopCapture();
 	COLORREF clrSel = 0;
+
 	if (ShowColorPicker(clrSel))
 	{
 		CString strHex = _T("");
@@ -703,6 +763,7 @@ void CColorPickaDlg::OnStnClickedColorHsv1()
 {
 	m_ctrlMag.StopCapture();
 	COLORREF clrSel = 0;
+
 	if (ShowColorPicker(clrSel))
 	{
 		stHSV hsvData;
@@ -734,6 +795,7 @@ void CColorPickaDlg::OnStnClickedColorRgb2()
 {
 	m_ctrlMag.StopCapture();
 	COLORREF clrSel = 0;
+
 	if (ShowColorPicker(clrSel))
 	{
 		CString strData = _T("");
@@ -762,6 +824,7 @@ void CColorPickaDlg::OnStnClickedColorHsv2()
 {
 	m_ctrlMag.StopCapture();
 	COLORREF clrSel = 0;
+
 	if (ShowColorPicker(clrSel))
 	{
 		stHSV hsvData;
@@ -1008,6 +1071,7 @@ void CColorPickaDlg::LoadColorLogData()
 	if (CppUtil::FileCheck(strIniFileName))
 	{
 		CString strLog = CppUtil::INIReadString(STR_APP_LIST, STR_KEY_LIST_LOGDATA, strIniFileName);
+
 		if (strLog.IsEmpty() == false)
 		{
 			std::vector<CString> vColors;
@@ -1047,9 +1111,9 @@ void CColorPickaDlg::SaveColorLogData()
 	strIniFileName.Format(_T("%s%s.ini"), CppUtil::GetExePath().GetString(), CppUtil::GetExeName(false).GetString());
 
 	int nCount = m_ctrlList.GetItemCount();
-
 	CString strTemp = _T("");
 	CString strColor = _T("");
+
 	for (int i = 0; i < nCount; i++)
 	{
 		strTemp = m_ctrlList.GetItemText(i, 0);

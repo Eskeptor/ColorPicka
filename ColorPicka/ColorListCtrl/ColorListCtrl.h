@@ -18,6 +18,14 @@ private:
 		Default_BackColor = RGB(240, 240, 240),
 		Default_ForeColor = RGB(0, 0, 0),
 	};
+
+	enum eColorIdx
+	{
+		Selected_BackColor = 0,
+		Selected_ForeColor,
+
+		ColorIdxMax
+	};
 public:
 	enum eListEvent
 	{
@@ -29,12 +37,14 @@ public:
 
 // Variables ============================================================================================
 private:
-	CColorListCtrlHeader m_ctrlHeader;		// Header Control
+	CColorListCtrlHeader m_ctrlHeader;			// Header Control
 
-	int m_nItemSize;						// Item Height Size
-	CImageList m_imgList;					// Image List for Item Height
-	UINT m_nEvtSendColorID;					// Send Color Event ID
-	int m_nItemMax;							// Item Max Size
+	int m_nItemSize;							// Item Height Size
+	CImageList m_imgList;						// Image List for Item Height
+	UINT m_nEvtSendColorID;						// Send Color Event ID
+	int m_nItemMax;								// Item Max Size
+	int m_nCurSel;								// Current Selected Item's Index
+	COLORREF m_arrClr[eColorIdx::ColorIdxMax];	// Color Array
 
 public:
 	DECLARE_DYNAMIC(CColorListCtrl)
@@ -65,10 +75,10 @@ public:
 	
 	// Set Item Height Size
 	void SetItemSize(int nSize);
-	// Set Item Background Color
-	void SetItemBgColor(int nIdx, COLORREF clrBack);
-	// Set Item Foreground Color
-	void SetItemFrColor(int nIdx, COLORREF clrFore);
+	// Set Selected Item Background Color
+	void SetSelectedItemBgColor(COLORREF clrBack);
+	// Set Selected Item Foreground Color
+	void SetSelectedItemFrColor(COLORREF clrFore);
 
 	// Add Color Item
 	void AddRGBColorItem(int nIdx, CString strColor);
@@ -82,6 +92,8 @@ public:
 	virtual void PreSubclassWindow();
 	afx_msg void OnNMCustomdraw(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNMClick(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+
 
 // ======================================================================================================
 

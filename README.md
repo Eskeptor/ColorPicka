@@ -9,12 +9,11 @@ Color Picker Program (MFC, C++)
  3) Check the color.
  ++) Try using a color converter.
 ```
-## What's New? (Last updated 2022.08.28 - Build 1.1.2.0)
+## What's New? (Last updated 2022.11.29 - Build 1.1.3.0)
 ![Add Color Picker](./ScreenShot/ScreenShot02.png)
 ```
- 1) Add Color Picker - Color Convertor
- 2) Algorithm Change - HSV to RGB
-    (https://stackoverflow.com/a/6930407)
+ 1) Fix bug - a color code that appears when you click on list.
+ 2) Initial Data Setting - Color Converter 
 ```
 ## Next Updates
 ```
