@@ -18,6 +18,7 @@ Constructor
 */
 CColorPickaDlg::CColorPickaDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_COLORPICKA_DIALOG, pParent)
+	, m_pOnMouseDlg(nullptr)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -64,6 +65,25 @@ BOOL CColorPickaDlg::OnInitDialog()
 
 	SetIcon(m_hIcon, TRUE);			
 	SetIcon(m_hIcon, FALSE);		
+
+	// Menu Test
+	if (false)
+	{
+		CMenu* ptrMenu = GetMenu();
+		if (ptrMenu != nullptr)
+		{
+			MENUINFO stMenuInfo{ 0, };
+			stMenuInfo.cbSize = sizeof(MENUINFO);
+
+			if (ptrMenu->GetMenuInfo(&stMenuInfo))
+			{
+				stMenuInfo.hbrBack = ::CreateSolidBrush(RGB(240, 240, 240));
+				stMenuInfo.fMask = MIM_BACKGROUND | MIM_STYLE;
+				stMenuInfo.dwStyle = MNS_NOCHECK;
+				ptrMenu->SetMenuInfo(&stMenuInfo);
+			}
+		}
+	}
 
 	InitControls();
 	InitData();
@@ -231,6 +251,24 @@ void CColorPickaDlg::InitControls()
 	// Mini Mode
 	{
 		SetMiniMode(g_stOptions.stOpSys.bIsMiniMode);
+	}
+
+	// On Mouse Mode Control
+	{
+		m_pOnMouseDlg = new COnMouseDlg;
+		m_pOnMouseDlg->Create(IDD_ON_MOUSE, this);
+		m_pOnMouseDlg->SetTextVisible(false);
+		m_pOnMouseDlg->ShowWindow(g_stOptions.stOpSys.bIsOnMouseMode ? SW_SHOW : SW_HIDE);
+
+		if (m_stOnMouseThread.thrRefresh == nullptr)
+		{
+			m_stOnMouseThread.thrRefresh = AfxBeginThread(ThreadMousePosition, this);
+
+			if (m_stOnMouseThread.thrRefresh == nullptr)
+			{
+				MessageBox(_T("On Mouse Thread Create Fail"), _T("Error"));
+			}
+		}
 	}
 }
 
@@ -879,6 +917,11 @@ LRESULT CColorPickaDlg::EvtSetCurMousePosColor(WPARAM, LPARAM lParam)
 	SetColorBox(clrColor);
 	AddColorLog(clrColor);
 
+	if (g_stOptions.stOpSys.bIsOnMouseMode)
+	{
+		::PostMessage(m_pOnMouseDlg->m_hWnd, COnMouseDlg::eEvent::eEVT_ChangeColor, 0, lParam);
+	}
+
 	return 1L;
 }
 
@@ -893,6 +936,7 @@ Key Capture Event
 LRESULT CColorPickaDlg::EvtKeyCapture(WPARAM, LPARAM)
 {
 	::PostMessage(m_ctrlMag.m_hWnd, CMouseMagnifier::eMagEvent::eEVT_GetColor, 0, 0);
+	
 	return 1L;
 }
 
@@ -955,6 +999,20 @@ OnClose
 */
 void CColorPickaDlg::OnClose()
 {
+	if (m_pOnMouseDlg != nullptr)
+	{
+		m_pOnMouseDlg->DestroyWindow();
+		delete m_pOnMouseDlg;
+		m_pOnMouseDlg = nullptr;
+	}
+
+	if (m_stOnMouseThread.thrRefresh != nullptr)
+	{
+		m_stOnMouseThread.bExitFlag = true;
+		while (m_stOnMouseThread.thrRefresh != nullptr)
+			Sleep(1);
+	}
+
 	if (g_stOptions.stOpList.bIsSaveLog)
 	{
 		SaveColorLogData();
@@ -1161,6 +1219,8 @@ void CColorPickaDlg::OnFileOption()
 		m_ctrlList.SetItemMax(g_stOptions.stOpList.nLogMax);
 
 	SetMiniMode(g_stOptions.stOpSys.bIsMiniMode);
+	
+	m_pOnMouseDlg->ShowWindow(g_stOptions.stOpSys.bIsOnMouseMode ? SW_SHOW : SW_HIDE);
 }
 
 
@@ -1225,4 +1285,58 @@ void CColorPickaDlg::SetMiniMode(bool bSet)
 
 	MoveWindow(rcWindow.left, rcWindow.top, nWindowWidth, nWindowHeight);
 
+}
+
+
+/**
+Set On Mouse Mode
+@access		private
+@param		bSet		On Mouse Mode Set
+@return
+*/
+void CColorPickaDlg::SetOnMouseMode(bool bSet)
+{
+
+}
+
+
+/**
+m_stOnMouseThread's Thread Function
+*/
+UINT CColorPickaDlg::ThreadMousePosition(LPVOID pParam)
+{
+	CColorPickaDlg* pMain = (CColorPickaDlg*)pParam;
+
+	if (pMain != nullptr)
+	{
+		POINT ptMouse;
+		POINT ptPrevMouse{ 0, };
+
+		while (pMain->m_stOnMouseThread.bExitFlag == false &&
+			   pMain != nullptr)
+		{
+			if (g_stOptions.stOpSys.bIsOnMouseMode)
+			{
+				GetCursorPos(&ptMouse);
+
+				if (ptMouse.x != ptPrevMouse.x ||
+					ptMouse.y != ptPrevMouse.y)
+				{
+					ptPrevMouse.x = ptMouse.x;
+					ptPrevMouse.y = ptMouse.y;
+
+					if (pMain->m_pOnMouseDlg != nullptr)
+					{
+						pMain->m_pOnMouseDlg->MoveWindow(ptMouse.x + 5, ptMouse.y, 60, 60, TRUE);
+					}
+				}
+			}
+
+			Sleep(10);
+		}
+
+		pMain->m_stOnMouseThread.thrRefresh = nullptr;
+	}
+
+	return 0;
 }

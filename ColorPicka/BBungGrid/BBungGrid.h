@@ -73,8 +73,8 @@ class CBBungGrid : public CMFCPropertyGridCtrl
 private:
 	enum eGridStuff
 	{
-		GridColRat_Item = 3,
-		GridColRat_Value = 5,
+		GridColRat_Item = 4,
+		GridColRat_Value = 4,
 		GridColRatTotal = GridColRat_Item + GridColRat_Value
 	};
 

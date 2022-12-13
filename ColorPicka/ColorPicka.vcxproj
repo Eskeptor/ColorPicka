@@ -205,6 +205,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="GVariable.h" />
     <ClInclude Include="MouseMagnifier\MouseMagnifier.h" />
+    <ClInclude Include="OnMouseDlg.h" />
     <ClInclude Include="OptionDlg.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
@@ -220,6 +221,7 @@
     <ClCompile Include="CppUtil\CppUtil.cpp" />
     <ClCompile Include="GVariable.cpp" />
     <ClCompile Include="MouseMagnifier\MouseMagnifier.cpp" />
+    <ClCompile Include="OnMouseDlg.cpp" />
     <ClCompile Include="OptionDlg.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -2,6 +2,7 @@
 #include "MouseMagnifier/MouseMagnifier.h"
 #include "ColorRect/ColorRect.h"
 #include "ColorListCtrl/ColorListCtrl.h"
+#include "OnMouseDlg.h"
 
 class CColorPickaDlg : public CDialogEx
 {
@@ -78,6 +79,15 @@ private:
 			nH(_nH), nS(_nS), nV(_nV) {}
 	};
 
+	struct stThr
+	{
+		CWinThread* thrRefresh;	// Thread
+		bool bExitFlag;
+
+		stThr()
+			: thrRefresh(nullptr), bExitFlag(false) {}
+	};
+
 public:
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_COLORPICKA_DIALOG };
@@ -102,7 +112,11 @@ private:
 	CMouseMagnifier m_ctrlMag;								// Magnifier Control
 	CColorListCtrl m_ctrlList;								// List Control
 	CRect m_rcWindow;										// Window Rect
+	CMouseMagnifier m_ctrlOnMouse;							// On Mouse Mode Controls
 
+	stThr m_stOnMouseThread;
+
+	COnMouseDlg* m_pOnMouseDlg;
 
 protected:
 	HICON m_hIcon;
@@ -152,6 +166,8 @@ private:
 
 	// Set Mini Mode
 	void SetMiniMode(bool bSet);
+	// Set On Mouse Mode
+	void SetOnMouseMode(bool bSet);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -166,6 +182,9 @@ protected:
 	afx_msg LRESULT EvtKeyCapture(WPARAM, LPARAM);
 	// Set Color Of Log Color
 	afx_msg LRESULT EvtSetLogMousePosColor(WPARAM, LPARAM lParam);
+
+	// m_stOnMouseThread's Thread Function
+	static UINT ThreadMousePosition(LPVOID pParam);
 
 	DECLARE_MESSAGE_MAP()
 

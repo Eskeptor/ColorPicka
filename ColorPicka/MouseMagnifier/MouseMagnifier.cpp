@@ -125,6 +125,24 @@ void CMouseMagnifier::DrawScreen(CDC* pDC)
 
 
 /**
+Set Window Rect Size
+@access		public
+@param		nLeft		Left
+@param		nTop		Top
+@param		nRight		Right
+@param		nBottom		Bottom
+@return
+*/
+void CMouseMagnifier::SetWindowRectSize(int nLeft, int nTop, int nRight, int nBottom)
+{
+	m_rtSize.left = nLeft;
+	m_rtSize.top = nTop;
+	m_rtSize.right = nRight;
+	m_rtSize.bottom = nBottom;
+}
+
+
+/**
 Set Cross Line Draw Enable
 @access		public
 @param		bEnable			Draw Enable
@@ -153,8 +171,11 @@ PreCreateWindow
 */
 BOOL CMouseMagnifier::PreCreateWindow(CREATESTRUCT& cs)
 {
-	GetWindowRect(&m_rtSize);
-	ScreenToClient(&m_rtSize);
+	if (m_hWnd != nullptr)
+	{
+		GetWindowRect(&m_rtSize);
+		ScreenToClient(&m_rtSize);
+	}
 
 	if (m_stRefreshThread.thrRefresh == nullptr)
 	{
@@ -204,44 +225,49 @@ UINT CMouseMagnifier::ThreadMousePosition(LPVOID pParam)
 		POINT ptMouse;
 		CRect rtCurWindow;
 		bool bIsIncludeWindow = false;
+		CWnd* pParent = pMain->GetParent();
+
 		while (pMain->m_stRefreshThread.bExitFlag == false &&
 			   pMain != nullptr)
 		{
-			pMain->GetParent()->GetWindowRect(&rtCurWindow);
-			GetCursorPos(&ptMouse);
+			if (pParent != nullptr)
+			{
+				pParent->GetWindowRect(&rtCurWindow);
+				GetCursorPos(&ptMouse);
 
-			if (pMain->m_bIsIncludeWindow)
-			{
-				bIsIncludeWindow = true;
-			}
-			else
-			{
-				if (ptMouse.x < rtCurWindow.left ||
-					ptMouse.x > rtCurWindow.right ||
-					ptMouse.y < rtCurWindow.top ||
-					ptMouse.y > rtCurWindow.bottom)
+				if (pMain->m_bIsIncludeWindow)
 				{
 					bIsIncludeWindow = true;
 				}
 				else
 				{
-					bIsIncludeWindow = false;
+					if (ptMouse.x < rtCurWindow.left ||
+						ptMouse.x > rtCurWindow.right ||
+						ptMouse.y < rtCurWindow.top ||
+						ptMouse.y > rtCurWindow.bottom)
+					{
+						bIsIncludeWindow = true;
+					}
+					else
+					{
+						bIsIncludeWindow = false;
+					}
 				}
-			}
 
-			if (bIsIncludeWindow &&
-				pMain->m_bCapture)
-			{
-				if (ptMouse.x != pMain->m_ptMouse.x ||
-					ptMouse.y != pMain->m_ptMouse.y)
+				if (bIsIncludeWindow &&
+					pMain->m_bCapture)
 				{
-					pMain->m_ptMouse.x = ptMouse.x;
-					pMain->m_ptMouse.y = ptMouse.y;
-					pMain->Invalidate();
+					if (ptMouse.x != pMain->m_ptMouse.x ||
+						ptMouse.y != pMain->m_ptMouse.y)
+					{
+						pMain->m_ptMouse.x = ptMouse.x;
+						pMain->m_ptMouse.y = ptMouse.y;
+						pMain->Invalidate();
+					}
 				}
 			}
 
-			Sleep(1);
+			Sleep(10);
 		}
 
 		pMain->m_stRefreshThread.thrRefresh = nullptr;

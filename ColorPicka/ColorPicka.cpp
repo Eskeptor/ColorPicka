@@ -122,6 +122,7 @@ bool CColorPickaApp::InitOptions()
 		// System
 		{
 			g_stOptions.stOpSys.bIsMiniMode = CppUtil::INIReadInt(STR_APP_SYS, STR_KEY_SYS_MINI, strIniFileName) == TRUE ? true : false;
+			g_stOptions.stOpSys.bIsOnMouseMode = CppUtil::INIReadInt(STR_APP_SYS, STR_KEY_SYS_ONMOUSE, strIniFileName) == TRUE ? true : false;
 		}
 	}
 
@@ -156,5 +157,6 @@ void CColorPickaApp::SaveOptions()
 	// System
 	{
 		CppUtil::INIWriteString(STR_APP_SYS, STR_KEY_SYS_MINI, strIniFileName, g_stOptions.stOpSys.bIsMiniMode);
+		CppUtil::INIWriteString(STR_APP_SYS, STR_KEY_SYS_ONMOUSE, strIniFileName, g_stOptions.stOpSys.bIsOnMouseMode);
 	}
 }

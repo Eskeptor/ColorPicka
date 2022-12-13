@@ -53,7 +53,7 @@ private:
 	bool m_bIsIncludeWindow;			// Window Not Include Option
 	bool m_bCapture;					// Zoom Capture Flag
 
-	stThr m_stRefreshThread;
+	stThr m_stRefreshThread;			// Mouse Point Thread
 
 public:
 	DECLARE_DYNAMIC(CMouseMagnifier)
@@ -84,6 +84,8 @@ public:
 	virtual void PreSubclassWindow();
 	afx_msg void OnDestroy();
 
+	// Set Window Rect Size
+	void SetWindowRectSize(int nLeft, int nTop, int nRight, int nBottom);
 	// Set Cross Line Draw Enable
 	void SetDrawCross(bool bEnable);
 	// Set Cross Line Color

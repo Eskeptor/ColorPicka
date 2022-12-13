@@ -1,3 +1,9 @@
+## Update 2022.11.29 - Build 1.1.3.0
+```
+ 1) Fix bug - a color code that appears when you click on list.
+ 2) Initial Data Setting - Color Converter 
+```
+
 ## Update 2022.08.28 - Build 1.1.2.0
 ```
  1) Add Color Picker - Color Convertor

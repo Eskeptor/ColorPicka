@@ -1,5 +1,6 @@
 # Welcome to my "ColorPicka"
 ![homepage](./ScreenShot/ScreenShot01.PNG)
+![homepage2](./ScreenShot/ScreenShot02.PNG)
 ## About this project
 Color Picker Program (MFC, C++)
 ## How to Use?
@@ -9,14 +10,13 @@ Color Picker Program (MFC, C++)
  3) Check the color.
  ++) Try using a color converter.
 ```
-## What's New? (Last updated 2022.11.29 - Build 1.1.3.0)
+## What's New? (Last updated 2022.12.13 - Build 1.1.4.0)
 ```
- 1) Fix bug - a color code that appears when you click on list.
- 2) Initial Data Setting - Color Converter 
+ 1) Add On Mouse Mode (A color indicator is attached next to the mouse pointer.)
 ```
 ## Next Updates
 ```
- 1) Mouse On Mode
+ 1) 
 ```
 ## License
 ```

@@ -37,6 +37,9 @@
     <Filter Include="Dialog\Option">
       <UniqueIdentifier>{69cfc515-6fc5-46d0-9662-0a250c56429a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Dialog\OnMouse">
+      <UniqueIdentifier>{b019256e-8e49-4b69-a3a3-4edc1640990c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ColorPicka.h">
@@ -81,6 +84,9 @@
     <ClInclude Include="OptionDlg.h">
       <Filter>Dialog\Option</Filter>
     </ClInclude>
+    <ClInclude Include="OnMouseDlg.h">
+      <Filter>Dialog\OnMouse</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ColorPicka.cpp">
@@ -115,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="OptionDlg.cpp">
       <Filter>Dialog\Option</Filter>
+    </ClCompile>
+    <ClCompile Include="OnMouseDlg.cpp">
+      <Filter>Dialog\OnMouse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

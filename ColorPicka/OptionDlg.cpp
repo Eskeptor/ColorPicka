@@ -85,13 +85,16 @@ void COptionDlg::InitControls()
 				P_SUBROOT_END(),		
 				P_SUBROOT(_T("TEXT:System;")),
 					P_VAR(g_stOptions.stOpSys.bIsMiniMode, _T("TEXT:Mini Mode;")),
+					P_VAR(g_stOptions.stOpSys.bIsOnMouseMode, _T("TEXT:On Mouse Mode;")),
 				P_SUBROOT_END(),
 			P_ROOT_END(),									
 		};
 		int nSize = sizeof(GRID_STUFF) / sizeof(CBBungGrid::stProperty);
 
 		m_ctrlGrid.Initial();
+		m_ctrlGrid.SetCustomColors(-1, -1, RGB(30, 30, 30), RGB(214, 214, 214), -1, -1, -1);
 		m_ctrlGrid.AppendProperty(GRID_STUFF, nSize);
+
 	}
 }
 

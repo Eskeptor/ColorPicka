@@ -20,6 +20,7 @@ constexpr LPCTSTR STR_KEY_LIST_LOGMAX = _T("LogItemMax");
 // Option - System Const
 constexpr LPCTSTR STR_APP_SYS = _T("System");
 constexpr LPCTSTR STR_KEY_SYS_MINI = _T("MiniMode");
+constexpr LPCTSTR STR_KEY_SYS_ONMOUSE = _T("MouseMode");
 
 // Option Structure
 struct stOpMagnifier
@@ -47,9 +48,11 @@ struct stOpColorList
 struct stOpSystem
 {
 	bool bIsMiniMode;		// Mini Mode
+	bool bIsOnMouseMode;	// On Mouse Mode
 
 	stOpSystem()
 		: bIsMiniMode(false)
+		, bIsOnMouseMode(false)
 	{}
 };
 struct stOptions
