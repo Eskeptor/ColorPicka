@@ -1,6 +1,6 @@
 # Welcome to my "ColorPicka"
 ![homepage](./ScreenShot/ScreenShot01.PNG)
-![homepage2](./ScreenShot/ScreenShot02.PNG)
+![homepage2](./ScreenShot/ScreenShot02.png)
 ## About this project
 Color Picker Program (MFC, C++)
 ## How to Use?
